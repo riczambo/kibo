@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kibo — Il tuo esserino da curare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <main class="game-device" id="gameDevice" aria-label="Schermo di gioco Kibo">
+      <!-- SCENARIO: Cielo, Stelle/Sole, Nuvole, Colline, Staccionata, Prato -->
+      <div class="scene" id="scene">
+        <div class="sky" id="sky">
+          <!-- Stelle (visibili di notte / tramonto) -->
+          <div class="stars" id="stars" aria-hidden="true">
+            <span class="star" style="top: 36%; left: 16%; animation-delay: 0s;"></span>
+            <span class="star star--lg" style="top: 44%; left: 26%; animation-delay: 0.7s;"></span>
+            <span class="star" style="top: 56%; left: 31%; animation-delay: 1.4s;"></span>
+            <span class="star" style="top: 34%; left: 54%; animation-delay: 0.4s;"></span>
+            <span class="star star--lg" style="top: 48%; left: 66%; animation-delay: 1.1s;"></span>
+            <span class="star" style="top: 38%; left: 88%; animation-delay: 1.9s;"></span>
+            <span class="star" style="top: 58%; left: 12%; animation-delay: 0.9s;"></span>
+          </div>
+
+          <!-- Sole o Luna -->
+          <div class="celestial-body" id="celestialBody" aria-hidden="true"></div>
+
+          <!-- Nuvole morbide -->
+          <div class="cloud cloud--1" aria-hidden="true"></div>
+          <div class="cloud cloud--2" aria-hidden="true"></div>
+          <div class="cloud cloud--3" aria-hidden="true"></div>
+        </div>
+
+        <!-- Colline morbide sullo sfondo -->
+        <svg class="hills" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,46 Q100,8 210,36 T400,26 L400,90 L0,90 Z" fill="var(--hill-back)" />
+          <path d="M0,58 Q130,30 260,52 T400,44 L400,90 L0,90 Z" fill="var(--hill-front)" />
+        </svg>
+
+        <!-- Staccionata bianca -->
+        <div class="picket-fence" aria-hidden="true"></div>
+
+        <!-- Prato -->
+        <div class="meadow" id="meadow">
+          <!-- Ciuffi d'erba stilizzati -->
+          <div class="grass-tuft" style="top: 16%; left: 12%;"></div>
+          <div class="grass-tuft" style="top: 9%; left: 76%;"></div>
+          <div class="grass-tuft" style="top: 36%; left: 82%;"></div>
+          <div class="grass-tuft" style="top: 44%; left: 9%;"></div>
+          <div class="grass-tuft" style="top: 66%; left: 63%;"></div>
+
+          <!-- Decorazioni giardino sbloccabili -->
+          <div class="garden-decor-layer" id="gardenDecorLayer"></div>
+
+          <!-- Particelle di pioggia / annaffiatura / cuoricini -->
+          <div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
+        </div>
+
+        <!-- Effetti meteo (pioggia continua / calura) -->
+        <div class="weather-overlay" id="weatherOverlay" aria-hidden="true"></div>
+
+        <!-- Overlay notte / sonno -->
+        <div class="night-tint" id="nightTint" aria-hidden="true"></div>
+      </div>
+
+      <!-- HUD SUPERIORE -->
+      <header class="top-hud">
+        <div class="hud-row">
+          <div class="pet-badge" id="openStatusBtn" role="button" tabindex="0" title="Dettagli e crescita di Kibo">
+            <div class="pet-badge__avatar" id="hudMiniAvatar" aria-hidden="true">🌱</div>
+            <div class="pet-badge__info">
+              <div class="pet-badge__name-row">
+                <span class="pet-badge__name" id="petNameDisplay">Kibo</span>
+                <span class="stage-pill" id="stageBadge">Germoglio</span>
+              </div>
+              <div class="xp-track" title="Progresso evoluzione">
+                <div class="xp-fill" id="xpBarFill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hud-right">
+            <div class="coin-pill" title="Semi d'oro">
+              <span class="coin-pill__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                  <circle cx="12" cy="12" r="10" fill="#f7c131" stroke="#d99714" stroke-width="2" />
+                  <circle cx="12" cy="12" r="6" fill="#ffd95a" />
+                </svg>
+              </span>
+              <span id="coinsDisplay">30</span>
+            </div>
+            <button class="icon-pill-btn" id="timeToggleBtn" type="button" title="Cambia giorno/notte">
+              <span id="timeToggleIcon">🌙</span>
+            </button>
+            <button class="icon-pill-btn" id="soundToggleBtn" type="button" title="Attiva/Disattiva suoni">
+              <span id="soundToggleIcon">🔊</span>
+            </button>
+            <button class="icon-pill-btn" id="settingsBtn" type="button" title="Info e impostazioni">
+              <span>⚙️</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Barre bisogni compatte -->
+        <div class="stats-bar" aria-label="Stato di Kibo">
+          <div class="stat-chip" data-stat="hunger" title="Fame">
+            <span class="stat-chip__icon">🍓</span>
+            <div class="stat-chip__track"><div class="stat-chip__fill" id="statHunger"></div></div>
+          </div>
+          <div class="stat-chip" data-stat="hydration" title="Idratazione">
+            <span class="stat-chip__icon">💧</span>
+            <div class="stat-chip__track"><div class="stat-chip__fill" id="statHydration"></div></div>
+          </div>
+          <div class="stat-chip" data-stat="happiness" title="Felicità">
+            <span class="stat-chip__icon">💛</span>
+            <div class="stat-chip__track"><div class="stat-chip__fill" id="statHappiness"></div></div>
+          </div>
+          <div class="stat-chip" data-stat="energy" title="Energia">
+            <span class="stat-chip__icon">⚡</span>
+            <div class="stat-chip__track"><div class="stat-chip__fill" id="statEnergy"></div></div>
+          </div>
+        </div>
+
+        <!-- Striscia Sfida & Stato/Meteo -->
+        <div class="hud-subrow">
+          <button class="quest-pill" id="questPill" type="button" title="Vedi dettagli sfida">
+            <span id="questPillText">🎯 Sfida in corso...</span>
+          </button>
+          <div class="condition-pill" id="conditionPill" title="Salute e condizioni attuali">
+            <span id="conditionPillText">❤️ 100%</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CREATURA CENTRALE (KIBO) -->
+      <div class="kibo-stage" id="kiboStage">
+        <!-- Fumetto di stato / reazione -->
+        <div class="speech-bubble" id="speechBubble" aria-live="polite"></div>
+
+        <!-- Kibo SVG interattivo -->
+        <button class="kibo-wrapper" id="kiboButton" type="button" aria-label="Accarezza Kibo">
+          <div class="kibo-shadow" id="kiboShadow"></div>
+          <div class="kibo-zzz" id="kiboZzz" aria-hidden="true">
+            <span>Z</span><span>z</span><span>z</span>
+          </div>
+          <svg id="kiboSvg" class="kibo-svg" viewBox="0 0 220 220" width="215" height="215" aria-hidden="true">
+            <!-- Il contenuto SVG di Kibo viene renderizzato dinamicamente da game.js in base a stadio, espressione e cappellino -->
+          </svg>
+        </button>
+      </div>
+
+      <!-- Sporcizia e Parassiti cliccabili sopra lo stage di Kibo -->
+      <div class="mess-layer" id="messLayer"></div>
+      <div class="pests-layer" id="pestsLayer"></div>
+
+      <!-- BARRA AZIONI RAPIDE -->
+      <nav class="quick-actions" aria-label="Azioni rapide">
+        <button class="action-pill" id="waterBtn" type="button">
+          <span class="action-pill__icon">🚿</span>
+          <span class="action-pill__label">Annaffia</span>
+        </button>
+        <button class="action-pill" id="cleanBtn" type="button">
+          <span class="action-pill__icon">✨</span>
+          <span class="action-pill__label">Pulisci</span>
+        </button>
+        <button class="action-pill" id="sleepBtn" type="button">
+          <span class="action-pill__icon" id="sleepBtnIcon">😴</span>
+          <span class="action-pill__label" id="sleepBtnLabel">Nanna</span>
+        </button>
+        <button class="action-pill action-pill--play" id="minigameBtn" type="button">
+          <span class="action-pill__icon">🎮</span>
+          <span class="action-pill__label">Gioca</span>
+        </button>
+      </nav>
+
+      <!-- DOCK INFERIORE (Bancarella Negozio + Cestino, come nello screenshot!) -->
+      <footer class="bottom-dock">
+        <button class="dock-card" id="shopBtn" type="button" aria-label="Apri Negozietto">
+          <span class="dock-card__svg" aria-hidden="true">
+            <!-- Icona bancarella SVG stile piatto -->
+            <svg viewBox="0 0 64 64" width="44" height="44">
+              <rect x="12" y="26" width="40" height="28" rx="4" fill="#d4bf2a" />
+              <rect x="16" y="34" width="12" height="14" rx="2" fill="#f6f3d4" />
+              <rect x="34" y="34" width="12" height="20" rx="2" fill="#9c8922" />
+              <circle cx="43" cy="44" r="1.8" fill="#f6f3d4" />
+              <!-- Tendina a righe rosse e bianche -->
+              <path d="M8,22 L14,10 L50,10 L56,22 Z" fill="#f5efe6" />
+              <path d="M14,10 L21,10 L18,22 L8,22 Z" fill="#e65c3a" />
+              <path d="M27,10 L35,10 L35,22 L27,22 Z" fill="#e65c3a" />
+              <path d="M41,10 L50,10 L56,22 L46,22 Z" fill="#e65c3a" />
+              <circle cx="13" cy="23" r="5" fill="#e65c3a" />
+              <circle cx="22.5" cy="23" r="5" fill="#fff7ee" />
+              <circle cx="32" cy="23" r="5" fill="#e65c3a" />
+              <circle cx="41.5" cy="23" r="5" fill="#fff7ee" />
+              <circle cx="51" cy="23" r="5" fill="#e65c3a" />
+            </svg>
+          </span>
+          <span class="dock-card__label">Negozio</span>
+        </button>
+
+        <button class="dock-card" id="basketBtn" type="button" aria-label="Apri Cestino">
+          <span class="dock-card__svg" aria-hidden="true">
+            <!-- Icona cestino intrecciato SVG -->
+            <svg viewBox="0 0 64 64" width="44" height="44">
+              <path d="M20,28 C20,12 44,12 44,28" fill="none" stroke="#7d5133" stroke-width="4.5" stroke-linecap="round" />
+              <path d="M12,28 L52,28 L46,52 C45.4,54.5 43.3,56 40.8,56 L23.2,56 C20.7,56 18.6,54.5 18,52 Z" fill="#a8744f" />
+              <rect x="9" y="25" width="46" height="6" rx="3" fill="#8b5a38" />
+              <!-- Trama cestino -->
+              <path d="M17,36 L47,36 M19,43 L45,43 M21,50 L43,50" stroke="#8b5a38" stroke-width="2.2" stroke-linecap="round" />
+              <path d="M24,31 L26,54 M32,31 L32,54 M40,31 L38,54" stroke="#8b5a38" stroke-width="2.2" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="dock-card__label">Cestino <span class="badge-count" id="basketBadge">0</span></span>
+        </button>
+      </footer>
+
+      <!-- MODAL / DRAWER OVERLAY -->
+      <div class="modal-backdrop" id="modalBackdrop" hidden>
+        <section class="modal-sheet" id="modalSheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Titolo</h2>
+            <button class="modal-close" id="modalCloseBtn" type="button" aria-label="Chiudi">✕</button>
+          </div>
+          <div class="modal-tabs" id="modalTabs" hidden></div>
+          <div class="modal-body" id="modalBody"></div>
+        </section>
+      </div>
+
+      <!-- OVERLAY MINI-GIOCHI -->
+      <div class="minigame-overlay" id="minigameOverlay" hidden>
+        <div class="minigame-hud">
+          <div class="minigame-stat" id="mgLeftStat">⏱️ <span id="mgTimer">25</span>s</div>
+          <div class="minigame-stat" id="mgMidStat">💧 <span id="mgScore">0</span> <span class="mg-combo" id="mgCombo" hidden>x1</span></div>
+          <div class="minigame-stat" id="mgLivesStat">❤️❤️❤️</div>
+          <button class="modal-close" id="mgQuitBtn" type="button" title="Esci dal mini-gioco">✕</button>
+        </div>
+        <canvas id="minigameCanvas" width="380" height="520"></canvas>
+        <div class="memory-board" id="memoryBoard" hidden>
+          <div class="memory-status" id="memoryStatus">Osserva la sequenza del prato...</div>
+          <div class="memory-grid" id="memoryGrid">
+            <button class="memory-pad memory-pad--0" data-pad="0" type="button">🍓</button>
+            <button class="memory-pad memory-pad--1" data-pad="1" type="button">💧</button>
+            <button class="memory-pad memory-pad--2" data-pad="2" type="button">🌻</button>
+            <button class="memory-pad memory-pad--3" data-pad="3" type="button">🦋</button>
+          </div>
+        </div>
+        <div class="minigame-controls-hint" id="mgHint">
+          Trascina con il dito/mouse o usa ⬅️ ➡️ per raccogliere gocce e soli, evita i ricci!
+        </div>
+      </div>
+
+      <!-- TOAST NOTIFICHE -->
+      <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
