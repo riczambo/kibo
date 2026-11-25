@@ -15,36 +15,47 @@
 
   const STAGES = [
     { id: 'semino', name: 'Semino', minXp: 0, minHealth: 0, icon: '🌱', bodyRx: 46, bodyRy: 36, scale: 0.96 },
-    { id: 'germoglio', name: 'Germoglio', minXp: 80, minHealth: 50, icon: '🌿', bodyRx: 51, bodyRy: 39, scale: 1.05 },
-    { id: 'bocciolo', name: 'Bocciolo', minXp: 220, minHealth: 60, icon: '🌷', bodyRx: 55, bodyRy: 42, scale: 1.12 },
-    { id: 'fiorito', name: 'Fiorito', minXp: 450, minHealth: 70, icon: '🌻', bodyRx: 59, bodyRy: 45, scale: 1.18 },
-    { id: 'guardiano', name: 'Guardiano', minXp: 800, minHealth: 80, icon: '🌳', bodyRx: 62, bodyRy: 47, scale: 1.24 },
+    { id: 'germoglio', name: 'Germoglio', minXp: 180, minHealth: 50, icon: '🌿', bodyRx: 51, bodyRy: 39, scale: 1.05 },
+    { id: 'bocciolo', name: 'Bocciolo', minXp: 520, minHealth: 60, icon: '🌷', bodyRx: 55, bodyRy: 42, scale: 1.12 },
+    { id: 'fiorito', name: 'Fiorito', minXp: 1100, minHealth: 70, icon: '🌻', bodyRx: 59, bodyRy: 45, scale: 1.18 },
+    { id: 'guardiano', name: 'Guardiano', minXp: 2000, minHealth: 80, icon: '🌳', bodyRx: 62, bodyRy: 47, scale: 1.24 },
   ];
 
   const FOODS = [
-    { id: 'berry', name: 'Bacca Dolce', icon: '🍓', price: 8, hunger: 22, happiness: 8, hydration: 4, xp: 10, desc: '+22 Fame, +8 Felicità' },
-    { id: 'melon', name: 'Fetta Fresca', icon: '🍉', price: 12, hunger: 18, hydration: 28, happiness: 10, xp: 12, desc: '+18 Fame, +28 Idro' },
-    { id: 'apple', name: 'Mela Croccante', icon: '🍎', price: 14, hunger: 36, happiness: 10, hydration: 8, xp: 14, desc: '+36 Fame, +8 Idro' },
-    { id: 'morning_coffee', name: 'Cafecito de Mañana', icon: '☕', price: 15, hunger: 12, energy: 28, happiness: 12, xp: 13, desc: '+28 Energia (extra di mattina!)' },
-    { id: 'sun_biscuit', name: 'Biscotto Sole', icon: '🍪', price: 18, hunger: 28, happiness: 16, energy: 16, xp: 16, desc: '+28 Fame, +16 Energia' },
-    { id: 'herb_wrap', name: 'Impacco d’Erbe', icon: '🌿', price: 18, health: 30, hydration: 12, xp: 12, desc: 'Cura +30 Salute, +12 Idro' },
-    { id: 'honey_jar', name: 'Miele Dorato', icon: '🍯', price: 20, hunger: 26, health: 18, happiness: 14, xp: 16, desc: '+26 Fame, +18 Salute' },
-    { id: 'tropical_cup', name: 'Sorbetto Tropicale', icon: '🍹', price: 22, hunger: 16, hydration: 24, happiness: 24, xp: 16, desc: '+24 Idro & Felicità (pomeriggio x2!)' },
-    { id: 'dew_cake', name: 'Tortino Rugiada', icon: '🧁', price: 24, hunger: 34, happiness: 26, hydration: 14, xp: 20, desc: '+34 Fame, +26 Felicità' },
-    { id: 'sap_tea', name: 'Tisana di Linfa', icon: '🍵', price: 26, health: 42, hydration: 16, energy: 12, xp: 18, desc: 'Cura +42 Salute, +16 Idro' },
-    { id: 'green_vit', name: 'Vitamina Verde', icon: '💊', price: 32, health: 65, energy: 18, xp: 20, desc: 'Cura potente: +65 Salute!' },
+    { id: 'berry', name: 'Bacca Dolce', icon: '🍓', price: 8, tag: '+22 🍓', hunger: 22, happiness: 8, hydration: 4, xp: 10, desc: '+22 Fame, +8 Felicità' },
+    { id: 'melon', name: 'Fetta Fresca', icon: '🍉', price: 12, tag: '+28 💧', hunger: 18, hydration: 28, happiness: 10, xp: 12, desc: '+18 Fame, +28 Idro' },
+    { id: 'apple', name: 'Mela Croccante', icon: '🍎', price: 14, tag: '+36 🍓', hunger: 36, happiness: 10, hydration: 8, xp: 14, desc: '+36 Fame, +8 Idro' },
+    { id: 'morning_coffee', name: 'Cafecito', icon: '☕', price: 15, tag: '+28 ⚡', hunger: 12, energy: 28, happiness: 12, xp: 13, desc: '+28 Energia (extra mattina)' },
+    { id: 'sun_biscuit', name: 'Biscotto Sole', icon: '🍪', price: 18, tag: '+28 🍓 ⚡', hunger: 28, happiness: 16, energy: 16, xp: 16, desc: '+28 Fame, +16 Energia' },
+    { id: 'herb_wrap', name: 'Impacco Erbe', icon: '🌿', price: 18, tag: '+30 ❤️', health: 30, hydration: 12, xp: 12, desc: '+30 Salute, +12 Idro' },
+    { id: 'honey_jar', name: 'Miele Dorato', icon: '🍯', price: 20, tag: '+26 🍓 ❤️', hunger: 26, health: 18, happiness: 14, xp: 16, desc: '+26 Fame, +18 Salute' },
+    { id: 'tropical_cup', name: 'Sorbetto', icon: '🍹', price: 22, tag: '+24 💧 💛', hunger: 16, hydration: 24, happiness: 24, xp: 16, desc: '+24 Idro & Felicità' },
+    { id: 'dew_cake', name: 'Tortino', icon: '🧁', price: 24, tag: '+34 🍓 💛', hunger: 34, happiness: 26, hydration: 14, xp: 20, desc: '+34 Fame, +26 Felicità' },
+    { id: 'sap_tea', name: 'Tisana Linfa', icon: '🍵', price: 26, tag: '+42 ❤️', health: 42, hydration: 16, energy: 12, xp: 18, desc: '+42 Salute, +16 Idro' },
+    { id: 'green_vit', name: 'Vitamina', icon: '💊', price: 32, tag: '+65 ❤️', health: 65, energy: 18, xp: 20, desc: '+65 Salute' },
   ];
 
   const HATS = [
-    { id: 'cap_green', name: 'Cappellino Verde', icon: '🧢', price: 0, perk: '+10% XP dai mini-giochi', desc: 'Classico berretto (+10% XP mini-giochi).' },
-    { id: 'cap_red', name: 'Berretto Fragola', icon: '🍓', price: 45, perk: '-20% consumo Fame', desc: 'Rallenta il calo della Fame del 20%.' },
-    { id: 'cute_bow', name: 'Fiocco Carino', icon: '🎀', price: 50, perk: '+20% Felicità & cure', desc: 'Aumenta felicità e recupero salute.' },
-    { id: 'sun_hat', name: 'Cappello Paglia', icon: '👒', price: 60, perk: 'Protegge dal caldo (-50%)', desc: 'Dimezza la sete durante le Ondate di Caldo.' },
-    { id: 'conejo_shades', name: 'Occhiali Conejo', icon: '🕶️', price: 75, perk: '+30% XP & vibe Bad Bunny', desc: 'Stile Un Verano Sin Ti: +30% XP!' },
-    { id: 'flower_crown', name: 'Corona Fiori', icon: '🌸', price: 85, perk: '+25% Felicità e rigenera Salute', desc: 'Più felicità dalle coccole e cura lenta.' },
-    { id: 'lofi_phones', name: 'Cuffie Lo-Fi', icon: '🎧', price: 95, perk: '-30% consumo Energia', desc: 'Riduce la stanchezza durante la giornata.' },
-    { id: 'wizard_hat', name: 'Cappello Mago', icon: '🧙', price: 120, perk: '+25% Monete bonus', desc: 'Aumenta del 25% le monete guadagnate.' },
-    { id: 'gold_crown', name: 'Coronita d’Oro', icon: '👑', price: 145, perk: '+25% XP e +25% Monete', desc: 'Per veri guardiani del prato!' },
+    { id: 'cap_green', name: 'Cap Verde', icon: '🧢', price: 0, perk: '+10% XP mini-giochi' },
+    { id: 'cap_red', name: 'Cap Fragola', icon: '🍓', price: 45, perk: '-20% consumo Fame' },
+    { id: 'cap_blue', name: 'Cap Cielo', icon: '🐬', price: 50, perk: '-15% consumo Idro' },
+    { id: 'cute_bow', name: 'Fiocco Rosa', icon: '🎀', price: 50, perk: '+20% Felicità & cure' },
+    { id: 'bandana_red', name: 'Bandana', icon: '🔥', price: 55, perk: '+15% XP mini-giochi' },
+    { id: 'sun_hat', name: 'Paglia', icon: '👒', price: 60, perk: 'Protegge dal caldo (-50%)' },
+    { id: 'beret_artist', name: 'Basco Chic', icon: '🎨', price: 65, perk: '+15% Felicità coccole' },
+    { id: 'conejo_shades', name: 'Occhiali Conejo', icon: '🕶️', price: 75, perk: '+30% XP & vibe Bad Bunny' },
+    { id: 'star_glasses', name: 'Occhiali Stella', icon: '🤩', price: 80, perk: '+25% Felicità' },
+    { id: 'flower_crown', name: 'Corona Fiori', icon: '🌸', price: 85, perk: 'Rigenera Salute' },
+    { id: 'bunny_ears', name: 'Orecchie Bunny', icon: '🐰', price: 90, perk: '+20% XP & monete extra' },
+    { id: 'lofi_phones', name: 'Cuffie Lo-Fi', icon: '🎧', price: 95, perk: '-30% consumo Energia' },
+    { id: 'cozy_scarf', name: 'Sciarpa Calda', icon: '🧣', price: 100, perk: 'Salute stabile di notte' },
+    { id: 'cat_ears', name: 'Orecchie Gatto', icon: '🐱', price: 105, perk: '+20% Felicità' },
+    { id: 'party_hat', name: 'Cappello Festa', icon: '🥳', price: 110, perk: '+20% XP & Monete' },
+    { id: 'wizard_hat', name: 'Cappello Mago', icon: '🧙', price: 120, perk: '+25% Monete bonus' },
+    { id: 'angel_halo', name: 'Aureola', icon: '😇', price: 135, perk: 'Rigenera Salute & Felicità' },
+    { id: 'gold_crown', name: 'Coronita Oro', icon: '👑', price: 145, perk: '+25% XP e +25% Monete' },
+    { id: 'leaf_cape', name: 'Mantello Eroe', icon: '🦸', price: 160, perk: '+30% XP & difesa parassiti' },
+    { id: 'astro_helmet', name: 'Casco Spazio', icon: '👩‍🚀', price: 180, perk: 'Immunità al caldo & +30% XP' },
   ];
 
   const DECORS = [
@@ -257,13 +268,13 @@
     hudMiniAvatar: document.getElementById('hudMiniAvatar'),
     xpBarFill: document.getElementById('xpBarFill'),
     coinsDisplay: document.getElementById('coinsDisplay'),
-    seedsBtn: document.getElementById('seedsBtn'),
     settingsBtn: document.getElementById('settingsBtn'),
     openStatusBtn: document.getElementById('openStatusBtn'),
     statHunger: document.getElementById('statHunger'),
     statHydration: document.getElementById('statHydration'),
     statHappiness: document.getElementById('statHappiness'),
     statEnergy: document.getElementById('statEnergy'),
+    statHealth: document.getElementById('statHealth'),
     questPill: document.getElementById('questPill'),
     questPillText: document.getElementById('questPillText'),
     conditionPill: document.getElementById('conditionPill'),
@@ -449,8 +460,13 @@
   }
 
   function awardCoins(baseCoins) {
-    const hasBonus = state.equippedHat === 'wizard_hat' || state.equippedHat === 'gold_crown';
-    const bonus = hasBonus ? Math.ceil(baseCoins * 0.25) : 0;
+    const hat = state.equippedHat;
+    const rate = (hat === 'wizard_hat' || hat === 'gold_crown')
+      ? 0.25
+      : (hat === 'bunny_ears' || hat === 'party_hat')
+        ? 0.2
+        : 0;
+    const bonus = rate ? Math.ceil(baseCoins * rate) : 0;
     const total = baseCoins + bonus;
     state.coins += total;
     return total;
@@ -462,8 +478,10 @@
     if (isSick()) mult = 0.45;
     else if (isFlourishing()) mult = 1.5;
 
-    if (state.equippedHat === 'conejo_shades') mult += 0.3;
-    else if (state.equippedHat === 'gold_crown') mult += 0.25;
+    const hat = state.equippedHat;
+    if (hat === 'conejo_shades' || hat === 'leaf_cape' || hat === 'astro_helmet') mult += 0.3;
+    else if (hat === 'gold_crown') mult += 0.25;
+    else if (hat === 'bunny_ears' || hat === 'party_hat') mult += 0.2;
 
     const gained = Math.max(1, Math.round(baseAmount * mult));
     state.xp += gained;
@@ -588,6 +606,37 @@
     return 'normal';
   }
 
+  function renderBackAccessorySvg(hatId, stageIndex) {
+    const yOff = stageIndex === 0 ? 4 : stageIndex >= 2 ? -3 : 0;
+    if (hatId === 'leaf_cape') {
+      return `
+        <path d="M72,132 Q50,158 58,180 Q110,192 162,180 Q170,158 148,132 Z" fill="#d94545" />
+        <path d="M78,135 Q64,158 70,176 Q110,184 150,176 Q156,158 142,135 Z" fill="#f0645a" />
+      `;
+    }
+    if (hatId === 'bunny_ears') {
+      return `
+        <g transform="translate(0, ${yOff})">
+          <ellipse cx="88" cy="86" rx="9" ry="25" transform="rotate(-14 88 86)" fill="#fff6f8" stroke="#e4c5ce" stroke-width="2" />
+          <ellipse cx="88" cy="87" rx="4.5" ry="17" transform="rotate(-14 88 87)" fill="#ffadc2" />
+          <ellipse cx="132" cy="86" rx="9" ry="25" transform="rotate(14 132 86)" fill="#fff6f8" stroke="#e4c5ce" stroke-width="2" />
+          <ellipse cx="132" cy="87" rx="4.5" ry="17" transform="rotate(14 132 87)" fill="#ffadc2" />
+        </g>
+      `;
+    }
+    if (hatId === 'cat_ears') {
+      return `
+        <g transform="translate(0, ${yOff})">
+          <path d="M74,114 L82,82 L100,104 Z" fill="#3a3d4a" />
+          <path d="M79,110 L84,89 L96,104 Z" fill="#ff9eb5" />
+          <path d="M146,114 L138,82 L120,104 Z" fill="#3a3d4a" />
+          <path d="M141,110 L136,89 L124,104 Z" fill="#ff9eb5" />
+        </g>
+      `;
+    }
+    return '';
+  }
+
   function renderHatSvg(hatId, stageIndex) {
     const yOff = stageIndex === 0 ? 4 : stageIndex >= 2 ? -3 : 0;
     if (hatId === 'cap_green') {
@@ -608,12 +657,30 @@
         </g>
       `;
     }
+    if (hatId === 'cap_blue') {
+      return `
+        <g transform="translate(0, ${yOff})">
+          <path d="M72,115 C74,89 146,89 148,115 Z" fill="#3a86d4" />
+          <path d="M97,94 C104,91 116,91 123,94 L126,114 L94,114 Z" fill="#6ab3f8" />
+          <path d="M70,113 Q110,103 150,113 L152,121 Q110,112 68,121 Z" fill="#235c9c" />
+        </g>
+      `;
+    }
     if (hatId === 'cute_bow') {
       return `
         <g transform="translate(18, ${yOff - 2})">
           <path d="M110,104 L95,94 L95,114 Z" fill="#ff7aa2" />
           <path d="M110,104 L125,94 L125,114 Z" fill="#ff7aa2" />
           <circle cx="110" cy="104" r="5" fill="#ff4d84" />
+        </g>
+      `;
+    }
+    if (hatId === 'bandana_red') {
+      return `
+        <g transform="translate(0, ${yOff})">
+          <path d="M68,116 Q110,107 152,116 L150,126 Q110,117 70,126 Z" fill="#d9383a" />
+          <path d="M148,118 L166,110 L161,122 Z" fill="#b82426" />
+          <path d="M148,122 L168,126 L158,133 Z" fill="#d9383a" />
         </g>
       `;
     }
@@ -626,14 +693,11 @@
         </g>
       `;
     }
-    if (hatId === 'conejo_shades') {
+    if (hatId === 'beret_artist') {
       return `
-        <g>
-          <rect x="81" y="128" width="24" height="16" rx="6" fill="#171b22" stroke="#ffd166" stroke-width="2" />
-          <rect x="115" y="128" width="24" height="16" rx="6" fill="#171b22" stroke="#ffd166" stroke-width="2" />
-          <line x1="105" y1="134" x2="115" y2="134" stroke="#ffd166" stroke-width="2.6" />
-          <line x1="86" y1="133" x2="94" y2="131" stroke="#ffffff" stroke-width="1.8" opacity="0.65" stroke-linecap="round" />
-          <line x1="120" y1="133" x2="128" y2="131" stroke="#ffffff" stroke-width="1.8" opacity="0.65" stroke-linecap="round" />
+        <g transform="translate(-4, ${yOff}) rotate(-8 110 105)">
+          <ellipse cx="110" cy="104" rx="34" ry="13" fill="#7d4a8c" />
+          <path d="M108,91 Q112,84 115,91" stroke="#4f2b59" stroke-width="3" fill="none" stroke-linecap="round" />
         </g>
       `;
     }
@@ -657,6 +721,26 @@
         </g>
       `;
     }
+    if (hatId === 'cozy_scarf') {
+      return `
+        <g>
+          <path d="M68,158 Q110,174 152,158 L148,171 Q110,185 72,171 Z" fill="#e55966" />
+          <path d="M84,163 L86,174 M102,167 L103,178 M120,167 L119,178 M136,163 L134,174" stroke="#ffd166" stroke-width="3" />
+          <rect x="122" y="164" width="12" height="22" rx="4" fill="#d14351" />
+        </g>
+      `;
+    }
+    if (hatId === 'party_hat') {
+      return `
+        <g transform="translate(0, ${yOff})">
+          <path d="M88,112 L110,66 L132,112 Z" fill="#5e9eff" />
+          <circle cx="105" cy="94" r="3.2" fill="#ffe066" />
+          <circle cx="116" cy="103" r="3.2" fill="#ff8fab" />
+          <circle cx="102" cy="106" r="2.8" fill="#a8eb86" />
+          <circle cx="110" cy="64" r="5.5" fill="#ff7096" />
+        </g>
+      `;
+    }
     if (hatId === 'wizard_hat') {
       return `
         <g transform="translate(0, ${yOff})">
@@ -664,6 +748,14 @@
           <path d="M80,114 L106,68 L138,114 Z" fill="#6354a8" />
           <path d="M84,109 Q110,113 136,109" stroke="#ffd166" stroke-width="4" fill="none" />
           <text x="104" y="99" font-size="11" fill="#ffe066">★</text>
+        </g>
+      `;
+    }
+    if (hatId === 'angel_halo') {
+      return `
+        <g transform="translate(0, ${yOff - 4})">
+          <ellipse cx="110" cy="84" rx="28" ry="8" fill="none" stroke="#ffe055" stroke-width="4.5" />
+          <ellipse cx="110" cy="84" rx="28" ry="8" fill="none" stroke="#fff9c4" stroke-width="1.5" />
         </g>
       `;
     }
@@ -678,11 +770,45 @@
     return '';
   }
 
+  function renderOverFaceAccessorySvg(hatId) {
+    if (hatId === 'conejo_shades') {
+      return `
+        <g>
+          <rect x="81" y="128" width="24" height="16" rx="6" fill="#171b22" stroke="#ffd166" stroke-width="2" />
+          <rect x="115" y="128" width="24" height="16" rx="6" fill="#171b22" stroke="#ffd166" stroke-width="2" />
+          <line x1="105" y1="134" x2="115" y2="134" stroke="#ffd166" stroke-width="2.6" />
+          <line x1="86" y1="133" x2="94" y2="131" stroke="#ffffff" stroke-width="1.8" opacity="0.65" stroke-linecap="round" />
+          <line x1="120" y1="133" x2="128" y2="131" stroke="#ffffff" stroke-width="1.8" opacity="0.65" stroke-linecap="round" />
+        </g>
+      `;
+    }
+    if (hatId === 'star_glasses') {
+      return `
+        <g>
+          <circle cx="94" cy="137" r="11" fill="#ff7eb6" opacity="0.88" stroke="#ffffff" stroke-width="2" />
+          <circle cx="126" cy="137" r="11" fill="#ff7eb6" opacity="0.88" stroke="#ffffff" stroke-width="2" />
+          <line x1="105" y1="137" x2="115" y2="137" stroke="#ffffff" stroke-width="2.4" />
+          <text x="89" y="141" font-size="11" fill="#fff6a9">★</text>
+          <text x="121" y="141" font-size="11" fill="#fff6a9">★</text>
+        </g>
+      `;
+    }
+    if (hatId === 'astro_helmet') {
+      return `
+        <g>
+          <circle cx="110" cy="138" r="56" fill="#d9f4ff" fill-opacity="0.22" stroke="#eef8ff" stroke-width="4" />
+          <path d="M72,115 Q82,96 102,92" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" opacity="0.7" />
+        </g>
+      `;
+    }
+    return '';
+  }
+
   function renderStemAndLeavesSvg(stageIndex) {
     if (stageIndex === 0) {
       return `
         <g class="kibo-stem-group">
-          <path d="M110,96 Q109,75 117,64" stroke="#68b729" stroke-width="5.5" stroke-linecap="round" fill="none" />
+          <path d="M110,114 Q109,84 117,64" stroke="#68b729" stroke-width="5.5" stroke-linecap="round" fill="none" />
           <path d="M117,64 C116,44 140,42 142,56 C140,68 122,70 117,64 Z" fill="#7ec936" />
           <path d="M117,64 Q129,56 138,54" stroke="#62a724" stroke-width="1.8" fill="none" stroke-linecap="round" />
         </g>
@@ -720,7 +846,7 @@
 
     return `
       <g class="kibo-stem-group">
-        <path d="M110,98 Q109,62 126,38" stroke="#65b826" stroke-width="6" stroke-linecap="round" fill="none" />
+        <path d="M110,114 Q109,72 126,38" stroke="#65b826" stroke-width="6" stroke-linecap="round" fill="none" />
         <path d="M110,72 C85,73 68,58 64,46 C86,42 103,52 110,72 Z" fill="#7fc834" />
         <path d="M108,71 Q88,58 72,50" stroke="#60a322" stroke-width="1.8" fill="none" stroke-linecap="round" />
         <path d="M126,40 C123,20 144,10 158,10 C156,30 142,42 126,40 Z" fill="#82cc38" />
@@ -793,17 +919,17 @@
     const expr = getKiboExpression();
     const seedCol = getSeedColor();
     const bodyFill = isSick() ? '#bfb1a8' : seedCol.fill;
+    const highlightFill = isSick() ? '#d6cbc4' : seedCol.shade;
 
-    // Occhiali Conejo si disegnano sopra gli occhi, altri cappelli prima o sopra
-    const isGlasses = state.equippedHat === 'conejo_shades';
     const bodySvg = `
       <g transform="translate(110, 144) scale(${stage.scale}) translate(-110, -144)">
+        ${renderBackAccessorySvg(state.equippedHat, stageIdx)}
         ${renderStemAndLeavesSvg(stageIdx)}
         <ellipse cx="110" cy="140" rx="${stage.bodyRx}" ry="${stage.bodyRy}" fill="${bodyFill}" />
-        <ellipse cx="102" cy="130" rx="${stage.bodyRx * 0.55}" ry="${stage.bodyRy * 0.35}" fill="${seedCol.shade}" opacity="0.45" />
-        ${!isGlasses ? renderHatSvg(state.equippedHat, stageIdx) : ''}
+        <ellipse cx="102" cy="130" rx="${stage.bodyRx * 0.55}" ry="${stage.bodyRy * 0.35}" fill="${highlightFill}" opacity="0.45" />
+        ${renderHatSvg(state.equippedHat, stageIdx)}
         ${renderEyesSvg(expr)}
-        ${isGlasses ? renderHatSvg(state.equippedHat, stageIdx) : ''}
+        ${renderOverFaceAccessorySvg(state.equippedHat)}
       </g>
     `;
     el.kiboSvg.innerHTML = bodySvg;
@@ -876,20 +1002,17 @@
     }
 
     el.conditionPill.className = 'condition-pill';
-    if (isSick()) {
-      el.conditionPill.classList.add('is-sick');
-      el.conditionPillText.textContent = `🤒 Appassito ❤️ ${Math.round(state.health)}%`;
-    } else if (state.weather === 'heatwave') {
+    if (state.weather === 'heatwave') {
       el.conditionPill.classList.add('is-heat');
-      el.conditionPillText.textContent = `☀️ Caldo! ❤️ ${Math.round(state.health)}%`;
+      el.conditionPillText.textContent = '☀️ Caldo!';
     } else if (state.weather === 'rain') {
       el.conditionPill.classList.add('is-rain');
-      el.conditionPillText.textContent = `🌧️ Pioggia ❤️ ${Math.round(state.health)}%`;
+      el.conditionPillText.textContent = '🌧️ Pioggia';
     } else if (isFlourishing()) {
       el.conditionPill.classList.add('is-flourishing');
-      el.conditionPillText.textContent = `✨ Rigoglio x1.5 XP`;
+      el.conditionPillText.textContent = '✨ Rigoglio x1.5';
     } else {
-      el.conditionPillText.textContent = `❤️ Salute ${Math.round(state.health)}%`;
+      el.conditionPillText.textContent = '🌤️ Sereno';
     }
   }
 
@@ -915,6 +1038,7 @@
     updateStatBar(el.statHydration, state.hydration);
     updateStatBar(el.statHappiness, state.happiness);
     updateStatBar(el.statEnergy, state.energy);
+    updateStatBar(el.statHealth, state.health);
     renderConditionAndQuest();
 
     el.device.classList.toggle('is-sleeping', state.isSleeping);
@@ -1329,86 +1453,16 @@
       return;
     }
 
-    if (currentModal === 'seeds') {
-      el.modalTitle.textContent = `I miei Semini (${rootSave.slots.length}/${MAX_SLOTS})`;
-      el.modalTabs.hidden = true;
-
-      for (const slot of rootSave.slots) {
-        const isActive = slot.id === state.id;
-        const col = getSeedColor(slot.colorId);
-        let stage = STAGES[0];
-        for (const s of STAGES) {
-          if (slot.xp >= s.minXp && slot.health >= s.minHealth) stage = s;
-          else break;
-        }
-        const card = document.createElement('div');
-        card.className = `slot-card ${isActive ? 'is-active' : ''}`;
-        card.innerHTML = `
-          <div class="slot-card__left">
-            <div class="slot-dot" style="background: ${col.fill};">${stage.icon}</div>
-            <div>
-              <div style="font-family: var(--font-display); font-weight: 700; font-size: 15px;">${escapeHtml(slot.name)} ${isActive ? '★' : ''}</div>
-              <div style="font-size: 12px; color: var(--ui-muted);">${stage.name} · ❤️ ${Math.round(slot.health)}% · ${Math.floor(slot.coins)} 💰</div>
-            </div>
-          </div>
-          <div class="slot-card__actions">
-            ${isActive ? '<span class="stage-pill">Attivo</span>' : '<button class="btn-mini js-use-slot" type="button">Gioca</button>'}
-            ${rootSave.slots.length > 1 ? '<button class="btn-mini btn-mini--del js-del-slot" type="button" title="Elimina semino">🗑️</button>' : ''}
-          </div>
-        `;
-        const useBtn = card.querySelector('.js-use-slot');
-        if (useBtn) useBtn.addEventListener('click', () => switchSlot(slot.id));
-        const delBtn = card.querySelector('.js-del-slot');
-        if (delBtn) delBtn.addEventListener('click', () => {
-          if (confirm(`Eliminare la vita di ${slot.name}?`)) deleteSlot(slot.id);
-        });
-        el.modalBody.appendChild(card);
-      }
-
-      if (rootSave.slots.length < MAX_SLOTS) {
-        const swatches = SEED_COLORS.map((c) =>
-          `<button type="button" class="color-swatch ${selectedNewColor === c.id ? 'is-selected' : ''}" data-color="${c.id}" style="background:${c.fill}" title="${c.name}"></button>`
-        ).join('');
-
-        const creator = document.createElement('div');
-        creator.className = 'profile-card';
-        creator.innerHTML = `
-          <div style="font-family: var(--font-display); font-weight: 700;">🌱 Adotta un nuovo Semino</div>
-          <div class="input-row">
-            <input class="text-input" id="newSeedName" type="text" maxlength="16" placeholder="Nome (es. Benito, Mochi...)" />
-            <button class="btn-secondary" id="createSeedBtn" type="button">Crea</button>
-          </div>
-          <div class="color-swatch-row">${swatches}</div>
-        `;
-        el.modalBody.appendChild(creator);
-
-        creator.querySelectorAll('.color-swatch').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            selectedNewColor = btn.dataset.color;
-            creator.querySelectorAll('.color-swatch').forEach((b) => {
-              b.classList.toggle('is-selected', b.dataset.color === selectedNewColor);
-            });
-          });
-        });
-
-        document.getElementById('createSeedBtn').addEventListener('click', () => {
-          const val = document.getElementById('newSeedName').value.trim();
-          createNewSlot(val || `Kibo ${rootSave.slots.length + 1}`, selectedNewColor);
-        });
-      }
-      return;
-    }
-
     if (currentModal === 'shop') {
       el.modalTitle.textContent = `Negozietto (${Math.floor(state.coins)} 💰)`;
       renderTabs([
         { id: 'food', label: '🍓 Cibo & Cure' },
-        { id: 'hats', label: '🧢 Cappelli' },
+        { id: 'hats', label: '👕 Vestiti' },
         { id: 'decor', label: '🌼 Giardino' },
       ]);
 
       const grid = document.createElement('div');
-      grid.className = 'item-grid';
+      grid.className = (currentTab === 'hats' || currentTab === 'decor') ? 'item-grid--compact' : 'item-grid';
 
       if (currentTab === 'food') {
         for (const f of FOODS) {
@@ -1416,12 +1470,13 @@
           const canBuy = state.coins >= f.price;
           const card = document.createElement('div');
           card.className = 'item-card';
+          card.title = f.desc;
           card.innerHTML = `
             <div class="item-card__icon">${f.icon}</div>
             <div class="item-card__name">${f.name}</div>
-            <div class="item-card__desc">${f.desc}${ownedQty ? ` · Hai: ${ownedQty}` : ''}</div>
+            <span class="item-pill-tag">${f.tag}${ownedQty ? ` · x${ownedQty}` : ''}</span>
             <button class="item-card__btn" type="button" ${canBuy ? '' : 'disabled'}>
-              Compra ${f.price} 💰
+              ${f.price} 💰
             </button>
           `;
           card.querySelector('button').addEventListener('click', () => buyItem('food', f.id));
@@ -1432,13 +1487,13 @@
           const owned = state.ownedHats.includes(h.id);
           const canBuy = state.coins >= h.price;
           const card = document.createElement('div');
-          card.className = 'item-card';
+          card.className = 'item-card item-card--compact';
+          card.title = h.perk;
           card.innerHTML = `
             <div class="item-card__icon">${h.icon}</div>
             <div class="item-card__name">${h.name}</div>
-            <div class="item-card__desc">${h.desc}</div>
             <button class="item-card__btn ${owned ? 'item-card__btn--equipped' : ''}" type="button" ${owned || !canBuy ? 'disabled' : ''}>
-              ${owned ? 'Già tuo ✓' : `Compra ${h.price} 💰`}
+              ${owned ? 'Tuo ✓' : `${h.price} 💰`}
             </button>
           `;
           if (!owned) {
@@ -1451,13 +1506,13 @@
           const owned = state.ownedDecors.includes(d.id);
           const canBuy = state.coins >= d.price;
           const card = document.createElement('div');
-          card.className = 'item-card';
+          card.className = 'item-card item-card--compact';
+          card.title = d.desc;
           card.innerHTML = `
             <div class="item-card__icon">${d.icon}</div>
             <div class="item-card__name">${d.name}</div>
-            <div class="item-card__desc">${d.desc}</div>
             <button class="item-card__btn ${owned ? 'item-card__btn--equipped' : ''}" type="button" ${owned || !canBuy ? 'disabled' : ''}>
-              ${owned ? 'Già tuo ✓' : `Compra ${d.price} 💰`}
+              ${owned ? 'Tuo ✓' : `${d.price} 💰`}
             </button>
           `;
           if (!owned) {
@@ -1471,7 +1526,7 @@
       el.modalTitle.textContent = 'Cestino di ' + state.name;
       renderTabs([
         { id: 'food', label: '🍓 Merende' },
-        { id: 'hats', label: '🧢 Cappelli' },
+        { id: 'hats', label: '👕 Vestiti' },
         { id: 'decor', label: '🌼 Giardino' },
       ]);
 
@@ -1490,7 +1545,7 @@
           card.innerHTML = `
             <div class="item-card__icon">${f.icon}</div>
             <div class="item-card__name">${f.name} (x${qty})</div>
-            <div class="item-card__desc">${f.desc}</div>
+            <span class="item-pill-tag">${f.tag}</span>
             <button class="item-card__btn" type="button">Dai a ${escapeHtml(state.name)}</button>
           `;
           card.querySelector('button').addEventListener('click', () => feedKibo(f.id));
@@ -1499,15 +1554,15 @@
         el.modalBody.appendChild(grid);
       } else if (currentTab === 'hats') {
         const grid = document.createElement('div');
-        grid.className = 'item-grid';
+        grid.className = 'item-grid--compact';
         for (const h of HATS.filter((x) => state.ownedHats.includes(x.id))) {
           const equipped = state.equippedHat === h.id;
           const card = document.createElement('div');
-          card.className = 'item-card';
+          card.className = 'item-card item-card--compact';
+          card.title = h.perk;
           card.innerHTML = `
             <div class="item-card__icon">${h.icon}</div>
             <div class="item-card__name">${h.name}</div>
-            <div class="item-card__desc">${h.perk}</div>
             <button class="item-card__btn ${equipped ? 'item-card__btn--equipped' : 'item-card__btn--equip'}" type="button">
               ${equipped ? 'Togli' : 'Indossa'}
             </button>
@@ -1523,15 +1578,14 @@
           return;
         }
         const grid = document.createElement('div');
-        grid.className = 'item-grid';
+        grid.className = 'item-grid--compact';
         for (const d of owned) {
           const active = state.activeDecors.includes(d.id);
           const card = document.createElement('div');
-          card.className = 'item-card';
+          card.className = 'item-card item-card--compact';
           card.innerHTML = `
             <div class="item-card__icon">${d.icon}</div>
             <div class="item-card__name">${d.name}</div>
-            <div class="item-card__desc">${d.desc}</div>
             <button class="item-card__btn ${active ? 'item-card__btn--equipped' : 'item-card__btn--equip'}" type="button">
               ${active ? 'Rimuovi' : 'Posiziona'}
             </button>
@@ -1543,18 +1597,110 @@
       }
     } else if (currentModal === 'status') {
       el.modalTitle.textContent = `Scheda di ${state.name}`;
-      el.modalTabs.hidden = true;
+      renderTabs([
+        { id: 'growth', label: '📊 Crescita' },
+        { id: 'seeds', label: `🌱 Semini (${rootSave.slots.length}/${MAX_SLOTS})` },
+      ]);
+
+      if (currentTab === 'seeds') {
+        for (const slot of rootSave.slots) {
+          const isActive = slot.id === state.id;
+          const col = getSeedColor(slot.colorId);
+          let st = STAGES[0];
+          for (const s of STAGES) {
+            if (slot.xp >= s.minXp && slot.health >= s.minHealth) st = s;
+            else break;
+          }
+          const card = document.createElement('div');
+          card.className = `slot-card ${isActive ? 'is-active' : ''}`;
+          card.innerHTML = `
+            <div class="slot-card__left">
+              <div class="slot-dot" style="background: ${col.fill};">${st.icon}</div>
+              <div>
+                <div style="font-family: var(--font-display); font-weight: 700; font-size: 15px;">${escapeHtml(slot.name)} ${isActive ? '★' : ''}</div>
+                <div style="font-size: 12px; color: var(--ui-muted);">${st.name} · ❤️ ${Math.round(slot.health)}% · ${Math.floor(slot.coins)} 💰</div>
+              </div>
+            </div>
+            <div class="slot-card__actions">
+              ${isActive ? '<span class="stage-pill">Attivo</span>' : '<button class="btn-mini js-use-slot" type="button">Gioca</button>'}
+              ${rootSave.slots.length > 1 ? '<button class="btn-mini btn-mini--del js-del-slot" type="button" title="Elimina semino">🗑️</button>' : ''}
+            </div>
+          `;
+          const useBtn = card.querySelector('.js-use-slot');
+          if (useBtn) useBtn.addEventListener('click', () => switchSlot(slot.id));
+          const delBtn = card.querySelector('.js-del-slot');
+          if (delBtn) delBtn.addEventListener('click', () => {
+            if (confirm(`Eliminare la vita di ${slot.name}?`)) deleteSlot(slot.id);
+          });
+          el.modalBody.appendChild(card);
+        }
+
+        if (rootSave.slots.length < MAX_SLOTS) {
+          const swatches = SEED_COLORS.map((c) =>
+            `<button type="button" class="color-swatch ${selectedNewColor === c.id ? 'is-selected' : ''}" data-color="${c.id}" style="background:${c.fill}" title="${c.name}"></button>`
+          ).join('');
+
+          const creator = document.createElement('div');
+          creator.className = 'profile-card';
+          creator.innerHTML = `
+            <div style="font-family: var(--font-display); font-weight: 700;">🌱 Adotta un nuovo Semino</div>
+            <div class="input-row">
+              <input class="text-input" id="newSeedName" type="text" maxlength="16" placeholder="Nome (es. Benito, Mochi...)" />
+              <button class="btn-secondary" id="createSeedBtn" type="button">Crea</button>
+            </div>
+            <div class="color-swatch-row">${swatches}</div>
+          `;
+          el.modalBody.appendChild(creator);
+
+          creator.querySelectorAll('.color-swatch').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              selectedNewColor = btn.dataset.color;
+              creator.querySelectorAll('.color-swatch').forEach((b) => {
+                b.classList.toggle('is-selected', b.dataset.color === selectedNewColor);
+              });
+            });
+          });
+
+          document.getElementById('createSeedBtn').addEventListener('click', () => {
+            const val = document.getElementById('newSeedName').value.trim();
+            createNewSlot(val || `Kibo ${rootSave.slots.length + 1}`, selectedNewColor);
+          });
+        }
+        return;
+      }
+
       const stage = getCurrentStage();
       const nextStage = getNextStage();
-      const hatObj = HATS.find((h) => h.id === state.equippedHat);
 
-      const stepsHtml = STAGES.map((s) => {
+      const timelineHtml = STAGES.map((s, idx) => {
         const unlocked = state.xp >= s.minXp && state.health >= s.minHealth;
+        const isCurrent = s.id === stage.id;
+        const prevMin = idx === 0 ? 0 : STAGES[idx - 1].minXp;
+        let pct = 0;
+        if (unlocked) pct = 100;
+        else if (nextStage && s.id === nextStage.id) {
+          pct = clamp(((state.xp - stage.minXp) / Math.max(1, s.minXp - stage.minXp)) * 100, 4, 99);
+        } else if (state.xp > prevMin) {
+          pct = clamp(((state.xp - prevMin) / Math.max(1, s.minXp - prevMin)) * 100, 0, 99);
+        }
+
+        const badgeText = isCurrent ? 'Attuale' : unlocked ? 'Completato ✓' : `${s.minXp} XP`;
         return `
-          <div class="stage-step ${unlocked ? 'is-unlocked' : ''}">
-            <span class="stage-step__emoji">${s.icon}</span>
-            <strong>${s.name}</strong><br/>
-            <span>${s.minXp} XP${s.minHealth ? ` · ❤️${s.minHealth}%` : ''}</span>
+          <div class="tl-step ${unlocked ? 'is-unlocked' : ''} ${isCurrent ? 'is-current' : ''}">
+            <div class="tl-axis">
+              <div class="tl-node">${s.icon}</div>
+              <div class="tl-line"></div>
+            </div>
+            <div class="tl-card">
+              <div class="tl-card__head">
+                <span class="tl-card__title">${s.name}</span>
+                <span class="tl-badge">${badgeText}</span>
+              </div>
+              <div class="tl-card__meta">
+                Soglia: <b>${s.minXp} XP</b>${s.minHealth ? ` · Salute ≥ <b>${s.minHealth}%</b>` : ''}
+              </div>
+              <div class="tl-progress"><div class="tl-progress__fill" style="width:${Math.round(pct)}%"></div></div>
+            </div>
           </div>
         `;
       }).join('');
@@ -1562,18 +1708,16 @@
       el.modalBody.innerHTML = `
         <div class="profile-card">
           <div class="profile-row"><span>Stadio attuale</span><strong>${stage.icon} ${stage.name}</strong></div>
-          <div class="profile-row"><span>Salute</span><strong>❤️ ${Math.round(state.health)}% ${isSick() ? '(Appassito)' : ''}</strong></div>
+          <div class="profile-row"><span>Salute</span><strong>❤️ ${Math.round(state.health)}%</strong></div>
           <div class="profile-row"><span>Esperienza (XP)</span><strong>${state.xp}${nextStage ? ` / ${nextStage.minXp}` : ' (MAX)'}</strong></div>
-          <div class="profile-row"><span>Bonus accessorio</span><strong>${hatObj ? hatObj.perk : 'Nessuno'}</strong></div>
-          <div class="profile-row"><span>Sfide completate</span><strong>${state.questsCompleted} 🎯</strong></div>
         </div>
         ${state.quest ? `
         <div class="profile-card" style="background:#fff7e2;">
           <div style="font-family: var(--font-display); font-weight: 700;">🎯 Sfida attuale (${state.quest.progress}/${state.quest.target})</div>
           <div style="font-size: 13px;">${state.quest.title} — Premio: <b>+${state.quest.xpReward} XP, +${state.quest.coinReward} 💰</b></div>
         </div>` : ''}
-        <div style="font-family: var(--font-display); font-weight: 600; margin-top: 2px;">Percorso di crescita</div>
-        <div class="stage-roadmap">${stepsHtml}</div>
+        <div style="font-family: var(--font-display); font-weight: 600; margin-top: 2px;">Grafico temporale di crescita</div>
+        <div class="growth-timeline">${timelineHtml}</div>
       `;
     } else if (currentModal === 'settings') {
       el.modalTitle.textContent = 'Impostazioni';
@@ -1603,17 +1747,6 @@
             <input class="text-input" id="renameInput" type="text" maxlength="16" value="${escapeHtml(state.name)}" />
             <button class="btn-secondary" id="saveNameBtn" type="button">Salva</button>
           </div>
-          <button class="btn-secondary" id="openSeedsFromSettings" type="button" style="background:#4e88d6;">🌱 Gestisci più Semini (${rootSave.slots.length}/${MAX_SLOTS})</button>
-        </div>
-
-        <div class="profile-card">
-          <div style="font-family: var(--font-display); font-weight: 600;">💾 Backup salvataggi (tra PC/domini)</div>
-          <div style="font-size: 12px; color: var(--ui-muted);">I salvataggi restano sul tuo browser anche aggiornando GitHub Pages. Usa questo box per spostarli altrove:</div>
-          <textarea class="backup-textarea" id="backupBox" placeholder="Premi Esporta oppure incolla qui un backup JSON e premi Importa..."></textarea>
-          <div class="input-row">
-            <button class="btn-secondary" id="exportBackupBtn" type="button" style="flex:1;">Esporta</button>
-            <button class="btn-secondary" id="importBackupBtn" type="button" style="flex:1; background:#e49326;">Importa</button>
-          </div>
         </div>
 
         <button class="btn-danger" id="resetGameBtn" type="button">Ricomincia questo semino da capo</button>
@@ -1638,8 +1771,6 @@
         });
       });
 
-      document.getElementById('openSeedsFromSettings').addEventListener('click', () => openModal('seeds'));
-
       document.getElementById('saveNameBtn').addEventListener('click', () => {
         const val = document.getElementById('renameInput').value.trim();
         if (!val) return;
@@ -1652,35 +1783,6 @@
           showSpeech('¡YHLQMDLG! El Conejo Malo del prato 🐰🌴', 3200);
         } else {
           showToast(`Nome aggiornato in ${state.name}!`);
-        }
-      });
-
-      document.getElementById('exportBackupBtn').addEventListener('click', () => {
-        const box = document.getElementById('backupBox');
-        box.value = JSON.stringify(rootSave);
-        box.select();
-        showToast('Backup generato! Copialo al sicuro.');
-      });
-
-      document.getElementById('importBackupBtn').addEventListener('click', () => {
-        try {
-          const raw = document.getElementById('backupBox').value.trim();
-          if (!raw) return;
-          const parsed = JSON.parse(raw);
-          if (!Array.isArray(parsed.slots) || parsed.slots.length === 0) throw new Error('Invalid');
-          rootSave = {
-            version: 2,
-            activeSlotId: parsed.activeSlotId || parsed.slots[0].id,
-            slots: parsed.slots.slice(0, MAX_SLOTS).map(sanitizePetSlot),
-            settings: { ...rootSave.settings, ...(parsed.settings || {}) },
-          };
-          state = rootSave.slots.find((s) => s.id === rootSave.activeSlotId) || rootSave.slots[0];
-          saveState();
-          renderUI();
-          closeModal();
-          showToast('Backup importato con successo! 🎉');
-        } catch {
-          showToast('Codice backup non valido!');
         }
       });
 
@@ -1716,16 +1818,8 @@
 
   function canPlayMinigame() {
     if (state.isSleeping) {
-      showToast('Kibo sta dormendo! Sveglialo per giocare.');
-      return false;
-    }
-    if (isSick()) {
-      showToast('Kibo è appassito 🤒! Curalo prima con una Tisana o Vitamina.');
-      return false;
-    }
-    if (state.energy < 14) {
-      showToast('Kibo è troppo stanco! Fagli fare un pisolino 😴');
-      return false;
+      state.isSleeping = false;
+      renderUI();
     }
     return true;
   }
@@ -1938,7 +2032,7 @@
 
     const baseCoins = survived ? Math.max(4, Math.round(mgState.score * 0.55)) : Math.max(1, Math.floor(mgState.score * 0.25));
     const gotCoins = awardCoins(baseCoins);
-    const hatXpBonus = state.equippedHat === 'cap_green' ? 1.1 : 1;
+    const hatXpBonus = state.equippedHat === 'bandana_red' ? 1.15 : state.equippedHat === 'cap_green' ? 1.1 : 1;
     const baseXp = survived ? 22 + Math.min(18, Math.floor(mgState.score / 3)) : 8;
     const gotXp = addXp(Math.round(baseXp * hatXpBonus));
 
@@ -2041,7 +2135,7 @@
 
     const baseCoins = clearedRounds > 0 ? 4 + clearedRounds * 4 : 1;
     const gotCoins = awardCoins(baseCoins);
-    const hatXpBonus = state.equippedHat === 'cap_green' ? 1.1 : 1;
+    const hatXpBonus = state.equippedHat === 'bandana_red' ? 1.15 : state.equippedHat === 'cap_green' ? 1.1 : 1;
     const gotXp = addXp(Math.round((8 + clearedRounds * 6) * hatXpBonus));
 
     state.happiness = clamp(state.happiness + 12 + clearedRounds * 2, 0, 100);
@@ -2215,7 +2309,7 @@
 
     const baseCoins = survived ? Math.max(5, Math.round(runState.score * 0.45)) : Math.max(2, Math.floor(runState.score * 0.25));
     const gotCoins = awardCoins(baseCoins);
-    const hatXpBonus = state.equippedHat === 'cap_green' ? 1.1 : 1;
+    const hatXpBonus = state.equippedHat === 'bandana_red' ? 1.15 : state.equippedHat === 'cap_green' ? 1.1 : 1;
     const gotXp = addXp(Math.round((survived ? 24 + Math.floor(runState.score / 4) : 10) * hatXpBonus));
 
     state.happiness = clamp(state.happiness + (survived ? 18 : 8), 0, 100);
@@ -2348,7 +2442,7 @@
 
     const baseCoins = Math.max(3, Math.round(whacState.score * 0.6));
     const gotCoins = awardCoins(baseCoins);
-    const hatXpBonus = state.equippedHat === 'cap_green' ? 1.1 : 1;
+    const hatXpBonus = state.equippedHat === 'bandana_red' ? 1.15 : state.equippedHat === 'cap_green' ? 1.1 : 1;
     const gotXp = addXp(Math.round((18 + Math.floor(whacState.score / 2)) * hatXpBonus));
 
     state.happiness = clamp(state.happiness + 16, 0, 100);
@@ -2411,17 +2505,23 @@
       if (hasMushroom) hungerDrain *= 0.9;
 
       let hydroDrain = 0.38;
+      if (state.equippedHat === 'cap_blue') hydroDrain *= 0.85;
       if (state.weather === 'heatwave') {
-        hydroDrain *= state.equippedHat === 'sun_hat' ? 1.25 : 1.9;
+        if (state.equippedHat === 'astro_helmet') hydroDrain *= 1.0;
+        else hydroDrain *= state.equippedHat === 'sun_hat' ? 1.25 : 1.9;
       }
 
       let happyDrain = hasDaisy ? 0.2 : 0.28;
+      if (state.equippedHat === 'angel_halo' || state.equippedHat === 'cat_ears' || state.equippedHat === 'star_glasses') {
+        happyDrain *= 0.78;
+      }
       let energyDrain = hasLantern ? 0.22 : 0.3;
       if (state.equippedHat === 'lofi_phones') energyDrain *= 0.7;
 
       if (state.pests.length > 0) {
-        hungerDrain += state.pests.length * 0.25;
-        happyDrain += state.pests.length * 0.25;
+        const pestMult = state.equippedHat === 'leaf_cape' ? 0.65 : 1;
+        hungerDrain += state.pests.length * 0.25 * pestMult;
+        happyDrain += state.pests.length * 0.25 * pestMult;
       }
 
       state.hunger = clamp(state.hunger - hungerDrain, 0, 100);
@@ -2440,7 +2540,7 @@
         advanceQuest('flourish', 1);
         if (Math.random() < 0.14) awardCoins(1);
       } else if (
-        (state.equippedHat === 'flower_crown' || state.equippedHat === 'cute_bow') &&
+        (state.equippedHat === 'flower_crown' || state.equippedHat === 'cute_bow' || state.equippedHat === 'angel_halo') &&
         state.hunger > 40 &&
         state.hydration > 40
       ) {
@@ -2512,9 +2612,8 @@
 
   el.shopBtn.addEventListener('click', () => openModal('shop', 'food'));
   el.basketBtn.addEventListener('click', () => openModal('basket', 'food'));
-  el.openStatusBtn.addEventListener('click', () => openModal('status'));
-  el.questPill.addEventListener('click', () => openModal('status'));
-  el.seedsBtn.addEventListener('click', () => openModal('seeds'));
+  el.openStatusBtn.addEventListener('click', () => openModal('status', 'growth'));
+  el.questPill.addEventListener('click', () => openModal('status', 'growth'));
   el.settingsBtn.addEventListener('click', () => openModal('settings'));
 
   el.modalCloseBtn.addEventListener('click', closeModal);

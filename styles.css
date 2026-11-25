@@ -605,27 +605,43 @@ body {
   transform: scale(0.92);
 }
 
-/* Barre statistiche */
+/* Barre statistiche (5 barre sulla stessa linea, Salute più evidente) */
 .stats-bar {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1.45fr;
+  align-items: center;
+  gap: 5px;
 }
 
 .stat-chip {
   background: var(--ui-surface);
   backdrop-filter: blur(8px);
-  border-radius: 14px;
-  padding: 5px 8px;
+  border-radius: 13px;
+  padding: 5px 6px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  min-width: 0;
+}
+
+.stat-chip--health {
+  padding: 6px 8px;
+  gap: 5px;
+  border-radius: 15px;
+  background: rgba(255, 245, 246, 0.95);
+  border: 2px solid rgba(232, 77, 91, 0.36);
+  box-shadow: 0 4px 12px rgba(232, 77, 91, 0.16);
 }
 
 .stat-chip__icon {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1;
+  flex-shrink: 0;
+}
+
+.stat-chip--health .stat-chip__icon {
+  font-size: 16px;
 }
 
 .stat-chip__track {
@@ -636,12 +652,21 @@ body {
   overflow: hidden;
 }
 
+.stat-chip--health .stat-chip__track {
+  height: 9px;
+  background: rgba(232, 77, 91, 0.14);
+}
+
 .stat-chip__fill {
   height: 100%;
   width: 80%;
   border-radius: 999px;
   background: #6cc24a;
   transition: width 0.35s ease, background-color 0.35s ease;
+}
+
+.stat-chip--health .stat-chip__fill {
+  background: linear-gradient(90deg, #e84d5b, #ff707d);
 }
 
 .stat-chip.is-low .stat-chip__fill {
@@ -1154,6 +1179,42 @@ body {
   color: #46781f;
 }
 
+.item-grid--compact {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.item-card--compact {
+  padding: 9px 7px;
+  gap: 4px;
+  border-radius: 16px;
+}
+
+.item-card--compact .item-card__icon {
+  font-size: 26px;
+}
+
+.item-card--compact .item-card__name {
+  font-size: 12px;
+  line-height: 1.15;
+}
+
+.item-card--compact .item-card__btn {
+  padding: 6px 6px;
+  font-size: 11.5px;
+  border-radius: 10px;
+}
+
+.item-pill-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #f1f5e4;
+  color: #546941;
+}
+
 .empty-state {
   text-align: center;
   padding: 24px 12px;
@@ -1161,7 +1222,7 @@ body {
   font-size: 14px;
 }
 
-/* Status & Impostazioni */
+/* Status & Grafico temporale crescita */
 .profile-card {
   background: #f4f8e8;
   border-radius: 18px;
@@ -1177,26 +1238,143 @@ body {
   font-size: 14px;
 }
 
-.stage-roadmap {
+.growth-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0 4px 2px;
+}
+
+.tl-step {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.tl-axis {
+  position: relative;
+  width: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.tl-line {
+  position: absolute;
+  top: 34px;
+  bottom: -12px;
+  width: 4px;
+  border-radius: 999px;
+  background: #e1e6d2;
+}
+
+.tl-step:last-child .tl-line {
+  display: none;
+}
+
+.tl-step.is-unlocked .tl-line {
+  background: #77c645;
+}
+
+.tl-node {
+  position: relative;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #eef2e2;
+  border: 3px solid #cfd6be;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  place-items: center;
+  font-size: 17px;
+}
+
+.tl-step.is-unlocked .tl-node {
+  background: #e9f9d6;
+  border-color: #69a938;
+}
+
+.tl-step.is-current .tl-node {
+  background: #fff3cc;
+  border-color: #f0ad2e;
+  box-shadow: 0 0 0 4px rgba(240, 173, 46, 0.25);
+}
+
+.tl-card {
+  flex: 1;
+  background: #ffffff;
+  border: 2px solid #ebefe0;
+  border-radius: 15px;
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  opacity: 0.72;
+}
+
+.tl-step.is-unlocked .tl-card {
+  opacity: 1;
+  border-color: #cde6b5;
+}
+
+.tl-step.is-current .tl-card {
+  opacity: 1;
+  border-color: #f0ad2e;
+  background: #fffdf5;
+}
+
+.tl-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 6px;
 }
 
-.stage-step {
-  background: #ffffff;
-  border: 2px solid #e6ebd7;
-  border-radius: 14px;
-  padding: 8px 4px;
-  text-align: center;
-  font-size: 11px;
-  opacity: 0.55;
+.tl-card__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
 }
 
-.stage-step.is-unlocked {
-  opacity: 1;
-  border-color: var(--accent-green);
-  background: #f1fae8;
+.tl-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #eef2e2;
+  color: #606e54;
+}
+
+.tl-step.is-unlocked .tl-badge {
+  background: #e6f5d5;
+  color: #46781f;
+}
+
+.tl-step.is-current .tl-badge {
+  background: #ffe8a3;
+  color: #8f5800;
+}
+
+.tl-card__meta {
+  font-size: 12px;
+  color: var(--ui-muted);
+}
+
+.tl-progress {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.tl-progress__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #69a938, #9ee056);
 }
 
 .stage-step__emoji {
@@ -1458,8 +1636,18 @@ body {
 
 .slot-card__actions {
   display: flex;
+  align-items: center;
   gap: 6px;
   flex-shrink: 0;
+}
+
+.slot-card__actions .stage-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  font-size: 11px;
+  line-height: 1.1;
 }
 
 .btn-mini {

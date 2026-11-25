@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=8" />
 </head>
 <body>
   <div class="app-shell">
@@ -70,7 +70,7 @@
       <!-- HUD SUPERIORE -->
       <header class="top-hud">
         <div class="hud-row">
-          <div class="pet-badge" id="openStatusBtn" role="button" tabindex="0" title="Dettagli e crescita di Kibo">
+          <div class="pet-badge" id="openStatusBtn" role="button" tabindex="0" title="Scheda crescita e gestione semini">
             <div class="pet-badge__avatar" id="hudMiniAvatar" aria-hidden="true">🌱</div>
             <div class="pet-badge__info">
               <div class="pet-badge__name-row">
@@ -93,9 +93,6 @@
               </span>
               <span id="coinsDisplay">30</span>
             </div>
-            <button class="icon-pill-btn" id="seedsBtn" type="button" title="I miei Semini (Slot)">
-              <span>🌱</span>
-            </button>
             <button class="icon-pill-btn" id="settingsBtn" type="button" title="Impostazioni, Cielo e Audio">
               <span>⚙️</span>
             </button>
@@ -119,6 +116,10 @@
           <div class="stat-chip" data-stat="energy" title="Energia">
             <span class="stat-chip__icon">⚡</span>
             <div class="stat-chip__track"><div class="stat-chip__fill" id="statEnergy"></div></div>
+          </div>
+          <div class="stat-chip stat-chip--health" data-stat="health" title="Salute">
+            <span class="stat-chip__icon">❤️</span>
+            <div class="stat-chip__track"><div class="stat-chip__fill" id="statHealth"></div></div>
           </div>
         </div>
 
@@ -269,6 +270,6 @@
     </main>
   </div>
 
-  <script src="game.js?v=4"></script>
+  <script src="game.js?v=8"></script>
 </body>
 </html>
