@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <div class="app-shell">
@@ -26,8 +26,8 @@
             <span class="star" style="top: 58%; left: 12%; animation-delay: 0.9s;"></span>
           </div>
 
-          <!-- Sole o Luna -->
-          <div class="celestial-body" id="celestialBody" aria-hidden="true"></div>
+          <!-- Sole o Luna (cliccabile per easter egg!) -->
+          <button class="celestial-body" id="celestialBody" type="button" aria-label="Sole o Luna"></button>
 
           <!-- Nuvole morbide -->
           <div class="cloud cloud--1" aria-hidden="true"></div>
@@ -93,13 +93,10 @@
               </span>
               <span id="coinsDisplay">30</span>
             </div>
-            <button class="icon-pill-btn" id="timeToggleBtn" type="button" title="Cambia giorno/notte">
-              <span id="timeToggleIcon">🌙</span>
+            <button class="icon-pill-btn" id="seedsBtn" type="button" title="I miei Semini (Slot)">
+              <span>🌱</span>
             </button>
-            <button class="icon-pill-btn" id="soundToggleBtn" type="button" title="Attiva/Disattiva suoni">
-              <span id="soundToggleIcon">🔊</span>
-            </button>
-            <button class="icon-pill-btn" id="settingsBtn" type="button" title="Info e impostazioni">
+            <button class="icon-pill-btn" id="settingsBtn" type="button" title="Impostazioni, Cielo e Audio">
               <span>⚙️</span>
             </button>
           </div>
@@ -248,6 +245,20 @@
             <button class="memory-pad memory-pad--3" data-pad="3" type="button">🦋</button>
           </div>
         </div>
+        <div class="whac-board" id="whacBoard" hidden>
+          <div class="memory-status" id="whacStatus">Scaccia 🐛 e 🐜, salva 🐞!</div>
+          <div class="whac-grid" id="whacGrid">
+            <button class="whac-hole" data-hole="0" type="button"></button>
+            <button class="whac-hole" data-hole="1" type="button"></button>
+            <button class="whac-hole" data-hole="2" type="button"></button>
+            <button class="whac-hole" data-hole="3" type="button"></button>
+            <button class="whac-hole" data-hole="4" type="button"></button>
+            <button class="whac-hole" data-hole="5" type="button"></button>
+            <button class="whac-hole" data-hole="6" type="button"></button>
+            <button class="whac-hole" data-hole="7" type="button"></button>
+            <button class="whac-hole" data-hole="8" type="button"></button>
+          </div>
+        </div>
         <div class="minigame-controls-hint" id="mgHint">
           Trascina con il dito/mouse o usa ⬅️ ➡️ per raccogliere gocce e soli, evita i ricci!
         </div>
@@ -258,6 +269,6 @@
     </main>
   </div>
 
-  <script src="game.js"></script>
+  <script src="game.js?v=4"></script>
 </body>
 </html>

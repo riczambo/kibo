@@ -1,7 +1,17 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'kibo_tamagotchi_save_v1';
+  const LEGACY_STORAGE_KEY = 'kibo_tamagotchi_save_v1';
+  const STORAGE_KEY = 'kibo_tamagotchi_slots_v2';
+  const MAX_SLOTS = 4;
+
+  const SEED_COLORS = [
+    { id: 'terracotta', name: 'Terracotta', fill: '#e26236', shade: '#ed794d' },
+    { id: 'peach', name: 'Pesca', fill: '#f0827d', shade: '#faa7a3' },
+    { id: 'mint', name: 'Menta', fill: '#57b894', shade: '#7ed4b4' },
+    { id: 'lavender', name: 'Lavanda', fill: '#947ed6', shade: '#b5a3eb' },
+    { id: 'honey', name: 'Miele', fill: '#e6a632', shade: '#f5c35b' },
+  ];
 
   const STAGES = [
     { id: 'semino', name: 'Semino', minXp: 0, minHealth: 0, icon: '🌱', bodyRx: 46, bodyRy: 36, scale: 0.96 },
@@ -13,19 +23,28 @@
 
   const FOODS = [
     { id: 'berry', name: 'Bacca Dolce', icon: '🍓', price: 8, hunger: 22, happiness: 8, hydration: 4, xp: 10, desc: '+22 Fame, +8 Felicità' },
-    { id: 'apple', name: 'Mela Croccante', icon: '🍎', price: 14, hunger: 36, happiness: 10, hydration: 8, xp: 14, desc: '+36 Fame, +8 Idro' },
     { id: 'melon', name: 'Fetta Fresca', icon: '🍉', price: 12, hunger: 18, hydration: 28, happiness: 10, xp: 12, desc: '+18 Fame, +28 Idro' },
+    { id: 'apple', name: 'Mela Croccante', icon: '🍎', price: 14, hunger: 36, happiness: 10, hydration: 8, xp: 14, desc: '+36 Fame, +8 Idro' },
+    { id: 'morning_coffee', name: 'Cafecito de Mañana', icon: '☕', price: 15, hunger: 12, energy: 28, happiness: 12, xp: 13, desc: '+28 Energia (extra di mattina!)' },
     { id: 'sun_biscuit', name: 'Biscotto Sole', icon: '🍪', price: 18, hunger: 28, happiness: 16, energy: 16, xp: 16, desc: '+28 Fame, +16 Energia' },
+    { id: 'herb_wrap', name: 'Impacco d’Erbe', icon: '🌿', price: 18, health: 30, hydration: 12, xp: 12, desc: 'Cura +30 Salute, +12 Idro' },
+    { id: 'honey_jar', name: 'Miele Dorato', icon: '🍯', price: 20, hunger: 26, health: 18, happiness: 14, xp: 16, desc: '+26 Fame, +18 Salute' },
+    { id: 'tropical_cup', name: 'Sorbetto Tropicale', icon: '🍹', price: 22, hunger: 16, hydration: 24, happiness: 24, xp: 16, desc: '+24 Idro & Felicità (pomeriggio x2!)' },
     { id: 'dew_cake', name: 'Tortino Rugiada', icon: '🧁', price: 24, hunger: 34, happiness: 26, hydration: 14, xp: 20, desc: '+34 Fame, +26 Felicità' },
     { id: 'sap_tea', name: 'Tisana di Linfa', icon: '🍵', price: 26, health: 42, hydration: 16, energy: 12, xp: 18, desc: 'Cura +42 Salute, +16 Idro' },
+    { id: 'green_vit', name: 'Vitamina Verde', icon: '💊', price: 32, health: 65, energy: 18, xp: 20, desc: 'Cura potente: +65 Salute!' },
   ];
 
   const HATS = [
     { id: 'cap_green', name: 'Cappellino Verde', icon: '🧢', price: 0, perk: '+10% XP dai mini-giochi', desc: 'Classico berretto (+10% XP mini-giochi).' },
     { id: 'cap_red', name: 'Berretto Fragola', icon: '🍓', price: 45, perk: '-20% consumo Fame', desc: 'Rallenta il calo della Fame del 20%.' },
+    { id: 'cute_bow', name: 'Fiocco Carino', icon: '🎀', price: 50, perk: '+20% Felicità & cure', desc: 'Aumenta felicità e recupero salute.' },
     { id: 'sun_hat', name: 'Cappello Paglia', icon: '👒', price: 60, perk: 'Protegge dal caldo (-50%)', desc: 'Dimezza la sete durante le Ondate di Caldo.' },
+    { id: 'conejo_shades', name: 'Occhiali Conejo', icon: '🕶️', price: 75, perk: '+30% XP & vibe Bad Bunny', desc: 'Stile Un Verano Sin Ti: +30% XP!' },
     { id: 'flower_crown', name: 'Corona Fiori', icon: '🌸', price: 85, perk: '+25% Felicità e rigenera Salute', desc: 'Più felicità dalle coccole e cura lenta.' },
+    { id: 'lofi_phones', name: 'Cuffie Lo-Fi', icon: '🎧', price: 95, perk: '-30% consumo Energia', desc: 'Riduce la stanchezza durante la giornata.' },
     { id: 'wizard_hat', name: 'Cappello Mago', icon: '🧙', price: 120, perk: '+25% Monete bonus', desc: 'Aumenta del 25% le monete guadagnate.' },
+    { id: 'gold_crown', name: 'Coronita d’Oro', icon: '👑', price: 145, perk: '+25% XP e +25% Monete', desc: 'Per veri guardiani del prato!' },
   ];
 
   const DECORS = [
@@ -47,7 +66,7 @@
     petTired: ['Troppo solletico! Dammi un attimo 😅', 'Basta coccole per ora, giochiamo!'],
     water: ['Che bella pioggerella!', 'Fresco fresco! 💧', 'Le mie foglioline ringraziano!'],
     eat: ['Gnam gnam, buonissimo!', 'Che delizia! 😋', 'Mi sento subito più forte!'],
-    heal: ['Mmm, che tisana rigenerante! 🍵', 'Mi sento già molto meglio! ✨'],
+    heal: ['Mmm, che cura rigenerante! 🍵', 'Mi sento già molto meglio! ✨'],
     clean: ['Tutto pulito e profumato!', 'Che bello il prato ordinato ✨'],
     pestClear: ['Via brutti insetti! Bravo!', 'Grazie per avermi difeso! 🛡️'],
     sleep: ['Buonanotte... Zzz...', 'Sogni d’oro sotto la luna...'],
@@ -61,15 +80,47 @@
     evolveBlocked: ['Ho abbastanza XP, ma serve più Salute per evolvere! ❤️'],
   };
 
+  const SPANISH_TIME_EASTER_EGGS = {
+    morning: [
+      'Por la mañana café... ☕ ¡Wepa, si parte!',
+      'Buenos días mi gente! Hoy se vibra alto 💪',
+      'Un cafecito de mañana y mucho flow ✨',
+    ],
+    afternoon: [
+      'Por la tarde ron... ¡e acqua fresca sul prato! 🌴',
+      'Un Verano Sin Ti qui nel giardino ☀️🐰',
+      '¡Brutal! Qué calor hace, bebote 😎',
+    ],
+    night: [
+      'Por la mañana café, por la tarde ron... ¡y de noche perreo suave! 🌙',
+      'Ya cayó la noche, ¡qué lo qué mi gente! ✨',
+      'Sotto la luna di San Benito... un Moscow Mule di rugiada 🍹🐰',
+    ],
+  };
+
+  function getDayPeriod() {
+    const h = new Date().getHours();
+    if (h >= 6 && h < 13) return 'morning';
+    if (h >= 13 && h < 20) return 'afternoon';
+    return 'night';
+  }
+
+  function isBenitoName(name) {
+    return /^(benito|bad\s?bunny|conejo|san\s?benito)$/i.test((name || '').trim());
+  }
+
   function createQuest(excludeType = null) {
     const pool = QUEST_TEMPLATES.filter((q) => q.type !== excludeType);
     const tpl = pick(pool.length ? pool : QUEST_TEMPLATES);
     return { ...tpl, progress: 0 };
   }
 
-  function createDefaultState() {
+  function createPetSlot(name = 'Kibo', colorId = 'terracotta') {
+    const id = `slot_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     return {
-      name: 'Kibo',
+      id,
+      name,
+      colorId,
       coins: 35,
       xp: 0,
       hunger: 74,
@@ -78,10 +129,8 @@
       energy: 84,
       health: 95,
       isSleeping: false,
-      timeMode: 'auto',
-      weather: 'clear', // 'clear' | 'heatwave' | 'rain'
+      weather: 'clear',
       weatherTicksLeft: 0,
-      soundOn: true,
       equippedHat: 'cap_green',
       ownedHats: ['cap_green'],
       ownedDecors: [],
@@ -91,7 +140,7 @@
         apple: 1,
       },
       messes: [],
-      pests: [], // { id, icon, name, hp, maxHp, left, bottom }
+      pests: [],
       quest: { ...QUEST_TEMPLATES[0], progress: 0 },
       questsCompleted: 0,
       petCooldownCount: 0,
@@ -103,27 +152,112 @@
     };
   }
 
-  let state = loadState();
+  function createDefaultRootSave() {
+    const first = createPetSlot('Kibo', 'terracotta');
+    return {
+      version: 2,
+      activeSlotId: first.id,
+      slots: [first],
+      settings: {
+        timeMode: 'auto',
+        soundOn: true,
+      },
+    };
+  }
+
+  function sanitizePetSlot(rawSlot) {
+    const base = createPetSlot(rawSlot.name || 'Kibo', rawSlot.colorId || 'terracotta');
+    return {
+      ...base,
+      ...rawSlot,
+      id: rawSlot.id || base.id,
+      inventory: { ...(rawSlot.inventory || base.inventory) },
+      ownedHats: Array.isArray(rawSlot.ownedHats) ? rawSlot.ownedHats : base.ownedHats,
+      ownedDecors: Array.isArray(rawSlot.ownedDecors) ? rawSlot.ownedDecors : [],
+      activeDecors: Array.isArray(rawSlot.activeDecors) ? rawSlot.activeDecors : [],
+      messes: Array.isArray(rawSlot.messes) ? rawSlot.messes : [],
+      pests: Array.isArray(rawSlot.pests) ? rawSlot.pests : [],
+      quest: rawSlot.quest && rawSlot.quest.title ? rawSlot.quest : base.quest,
+    };
+  }
+
+  function loadRootSave() {
+    try {
+      const rawV2 = localStorage.getItem(STORAGE_KEY);
+      if (rawV2) {
+        const parsed = JSON.parse(rawV2);
+        const slots = Array.isArray(parsed.slots) && parsed.slots.length > 0
+          ? parsed.slots.map(sanitizePetSlot)
+          : [createPetSlot()];
+        const activeId = slots.some((s) => s.id === parsed.activeSlotId) ? parsed.activeSlotId : slots[0].id;
+        const root = {
+          version: 2,
+          activeSlotId: activeId,
+          slots,
+          settings: {
+            timeMode: parsed.settings?.timeMode || 'auto',
+            soundOn: parsed.settings?.soundOn !== undefined ? parsed.settings.soundOn : true,
+          },
+        };
+        const active = root.slots.find((s) => s.id === root.activeSlotId);
+        if (active) applyOfflineProgress(active);
+        return root;
+      }
+
+      // Migrazione automatica dal vecchio salvataggio singolo v1!
+      const rawV1 = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (rawV1) {
+        const oldPet = JSON.parse(rawV1);
+        const migrated = sanitizePetSlot({ ...oldPet, id: 'slot_migrated_1', colorId: 'terracotta' });
+        applyOfflineProgress(migrated);
+        return {
+          version: 2,
+          activeSlotId: migrated.id,
+          slots: [migrated],
+          settings: {
+            timeMode: oldPet.timeMode || 'auto',
+            soundOn: oldPet.soundOn !== undefined ? oldPet.soundOn : true,
+          },
+        };
+      }
+    } catch {
+      // Fallback to default
+    }
+    return createDefaultRootSave();
+  }
+
+  let rootSave = loadRootSave();
+  let state = rootSave.slots.find((s) => s.id === rootSave.activeSlotId) || rootSave.slots[0];
+
+  function saveState() {
+    state.lastSavedAt = Date.now();
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(rootSave));
+    } catch {
+      // Ignore quota errors
+    }
+  }
+
   let currentModal = null;
   let currentTab = 'food';
+  let selectedNewColor = 'peach';
   let temporaryExpression = null;
   let expressionTimer = null;
   let speechTimer = null;
   let isBlinking = false;
   let audioCtx = null;
+  let skyEasterEggCooldown = 0;
 
   // ==================== DOM ELEMENTS ====================
   const el = {
     device: document.getElementById('gameDevice'),
+    celestialBody: document.getElementById('celestialBody'),
     petNameDisplay: document.getElementById('petNameDisplay'),
     stageBadge: document.getElementById('stageBadge'),
     hudMiniAvatar: document.getElementById('hudMiniAvatar'),
     xpBarFill: document.getElementById('xpBarFill'),
     coinsDisplay: document.getElementById('coinsDisplay'),
-    timeToggleBtn: document.getElementById('timeToggleBtn'),
-    timeToggleIcon: document.getElementById('timeToggleIcon'),
-    soundToggleBtn: document.getElementById('soundToggleBtn'),
-    soundToggleIcon: document.getElementById('soundToggleIcon'),
+    seedsBtn: document.getElementById('seedsBtn'),
     settingsBtn: document.getElementById('settingsBtn'),
     openStatusBtn: document.getElementById('openStatusBtn'),
     statHunger: document.getElementById('statHunger'),
@@ -162,10 +296,12 @@
     memoryBoard: document.getElementById('memoryBoard'),
     memoryStatus: document.getElementById('memoryStatus'),
     memoryGrid: document.getElementById('memoryGrid'),
+    whacBoard: document.getElementById('whacBoard'),
+    whacStatus: document.getElementById('whacStatus'),
+    whacGrid: document.getElementById('whacGrid'),
     mgLeftStat: document.getElementById('mgLeftStat'),
     mgMidStat: document.getElementById('mgMidStat'),
     mgLivesStat: document.getElementById('mgLivesStat'),
-    mgTimer: document.getElementById('mgTimer'),
     mgScore: document.getElementById('mgScore'),
     mgCombo: document.getElementById('mgCombo'),
     mgHint: document.getElementById('mgHint'),
@@ -174,7 +310,7 @@
 
   // ==================== AUDIO SYNTH ====================
   function playTone(type) {
-    if (!state.soundOn) return;
+    if (!rootSave.settings.soundOn) return;
     try {
       if (!audioCtx) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -216,9 +352,17 @@
         playNote(1174.66, now + 0.07, 0.14, 'sine', 0.07);
       } else if (type === 'bonk') {
         playNote(196, now, 0.14, 'sawtooth', 0.05);
+      } else if (type === 'jump') {
+        playNote(360, now, 0.07, 'sine', 0.06);
+        playNote(540, now + 0.05, 0.09, 'sine', 0.06);
       } else if (type === 'evolve') {
         [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
           playNote(f, now + idx * 0.1, 0.22, 'triangle', 0.09);
+        });
+      } else if (type === 'tropical') {
+        // Ritmo leggero stile caraibico
+        [440, 554.37, 659.25, 587.33, 659.25].forEach((f, idx) => {
+          playNote(f, now + idx * 0.09, 0.14, 'triangle', 0.08);
         });
       } else if (type === 'click') {
         playNote(600, now, 0.05, 'sine', 0.05);
@@ -228,32 +372,7 @@
         playNote(freqs[idx % 4], now, 0.18, 'triangle', 0.09);
       }
     } catch {
-      // Ignore audio errors if blocked
-    }
-  }
-
-  // ==================== PERSISTENCE ====================
-  function loadState() {
-    const fallback = createDefaultState();
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return fallback;
-      const parsed = JSON.parse(raw);
-      const merged = {
-        ...fallback,
-        ...parsed,
-        inventory: { ...(parsed.inventory || {}) },
-        ownedHats: Array.isArray(parsed.ownedHats) ? parsed.ownedHats : fallback.ownedHats,
-        ownedDecors: Array.isArray(parsed.ownedDecors) ? parsed.ownedDecors : [],
-        activeDecors: Array.isArray(parsed.activeDecors) ? parsed.activeDecors : [],
-        messes: Array.isArray(parsed.messes) ? parsed.messes : [],
-        pests: Array.isArray(parsed.pests) ? parsed.pests : [],
-        quest: parsed.quest && parsed.quest.title ? parsed.quest : fallback.quest,
-      };
-      applyOfflineProgress(merged);
-      return merged;
-    } catch {
-      return fallback;
+      // Ignore audio errors
     }
   }
 
@@ -281,15 +400,6 @@
     s.lastSavedAt = now;
   }
 
-  function saveState() {
-    state.lastSavedAt = Date.now();
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch {
-      // Ignore storage quota errors
-    }
-  }
-
   // ==================== HELPERS & PROGRESSION ====================
   function clamp(val, min, max) {
     return Math.max(min, Math.min(max, val));
@@ -297,6 +407,10 @@
 
   function pick(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function getSeedColor(colorId = state.colorId) {
+    return SEED_COLORS.find((c) => c.id === colorId) || SEED_COLORS[0];
   }
 
   function isSick() {
@@ -335,7 +449,8 @@
   }
 
   function awardCoins(baseCoins) {
-    const bonus = state.equippedHat === 'wizard_hat' ? Math.ceil(baseCoins * 0.25) : 0;
+    const hasBonus = state.equippedHat === 'wizard_hat' || state.equippedHat === 'gold_crown';
+    const bonus = hasBonus ? Math.ceil(baseCoins * 0.25) : 0;
     const total = baseCoins + bonus;
     state.coins += total;
     return total;
@@ -346,6 +461,9 @@
     let mult = 1;
     if (isSick()) mult = 0.45;
     else if (isFlourishing()) mult = 1.5;
+
+    if (state.equippedHat === 'conejo_shades') mult += 0.3;
+    else if (state.equippedHat === 'gold_crown') mult += 0.25;
 
     const gained = Math.max(1, Math.round(baseAmount * mult));
     state.xp += gained;
@@ -447,7 +565,8 @@
 
   // ==================== TIME OF DAY ====================
   function resolveTimeTheme() {
-    if (state.timeMode !== 'auto') return state.timeMode;
+    const tm = rootSave.settings.timeMode;
+    if (tm !== 'auto') return tm;
     const h = new Date().getHours();
     if (h >= 7 && h < 17) return 'day';
     if (h >= 17 && h < 20) return 'sunset';
@@ -455,14 +574,8 @@
   }
 
   function renderTimeTheme() {
-    const theme = resolveTimeTheme();
-    el.device.dataset.time = theme;
+    el.device.dataset.time = resolveTimeTheme();
     el.device.dataset.weather = state.weather || 'clear';
-    const icons = { auto: '🕒', night: '🌙', day: '☀️', sunset: '🌅' };
-    el.timeToggleIcon.textContent = state.timeMode === 'auto'
-      ? (theme === 'night' ? '🌙' : theme === 'day' ? '☀️' : '🌅')
-      : icons[state.timeMode];
-    el.timeToggleBtn.title = `Cielo attuale: ${state.timeMode === 'auto' ? 'automatico' : state.timeMode}`;
   }
 
   // ==================== RENDER KIBO SVG ====================
@@ -495,12 +608,32 @@
         </g>
       `;
     }
+    if (hatId === 'cute_bow') {
+      return `
+        <g transform="translate(18, ${yOff - 2})">
+          <path d="M110,104 L95,94 L95,114 Z" fill="#ff7aa2" />
+          <path d="M110,104 L125,94 L125,114 Z" fill="#ff7aa2" />
+          <circle cx="110" cy="104" r="5" fill="#ff4d84" />
+        </g>
+      `;
+    }
     if (hatId === 'sun_hat') {
       return `
         <g transform="translate(0, ${yOff})">
           <ellipse cx="110" cy="116" rx="58" ry="11" fill="#f3d078" />
           <path d="M78,114 C80,92 140,92 142,114 Z" fill="#f7da8c" />
           <path d="M78,109 Q110,114 142,109" stroke="#e46336" stroke-width="4" fill="none" />
+        </g>
+      `;
+    }
+    if (hatId === 'conejo_shades') {
+      return `
+        <g>
+          <rect x="81" y="128" width="24" height="16" rx="6" fill="#171b22" stroke="#ffd166" stroke-width="2" />
+          <rect x="115" y="128" width="24" height="16" rx="6" fill="#171b22" stroke="#ffd166" stroke-width="2" />
+          <line x1="105" y1="134" x2="115" y2="134" stroke="#ffd166" stroke-width="2.6" />
+          <line x1="86" y1="133" x2="94" y2="131" stroke="#ffffff" stroke-width="1.8" opacity="0.65" stroke-linecap="round" />
+          <line x1="120" y1="133" x2="128" y2="131" stroke="#ffffff" stroke-width="1.8" opacity="0.65" stroke-linecap="round" />
         </g>
       `;
     }
@@ -515,6 +648,15 @@
         </g>
       `;
     }
+    if (hatId === 'lofi_phones') {
+      return `
+        <g>
+          <path d="M62,135 C62,92 158,92 158,135" fill="none" stroke="#455065" stroke-width="6" stroke-linecap="round" />
+          <rect x="54" y="126" width="14" height="24" rx="7" fill="#70c1b3" stroke="#364154" stroke-width="2.5" />
+          <rect x="152" y="126" width="14" height="24" rx="7" fill="#70c1b3" stroke="#364154" stroke-width="2.5" />
+        </g>
+      `;
+    }
     if (hatId === 'wizard_hat') {
       return `
         <g transform="translate(0, ${yOff})">
@@ -522,6 +664,14 @@
           <path d="M80,114 L106,68 L138,114 Z" fill="#6354a8" />
           <path d="M84,109 Q110,113 136,109" stroke="#ffd166" stroke-width="4" fill="none" />
           <text x="104" y="99" font-size="11" fill="#ffe066">★</text>
+        </g>
+      `;
+    }
+    if (hatId === 'gold_crown') {
+      return `
+        <g transform="translate(0, ${yOff - 2})">
+          <path d="M84,112 L80,88 L98,100 L110,82 L122,100 L140,88 L136,112 Z" fill="#ffd147" stroke="#d99416" stroke-width="2.5" stroke-linejoin="round" />
+          <circle cx="110" cy="102" r="3.5" fill="#e6534b" />
         </g>
       `;
     }
@@ -641,15 +791,19 @@
     const stage = getCurrentStage();
     const stageIdx = STAGES.findIndex((s) => s.id === stage.id);
     const expr = getKiboExpression();
-    const bodyFill = isSick() ? '#cc7c5c' : '#e26236';
+    const seedCol = getSeedColor();
+    const bodyFill = isSick() ? '#bfb1a8' : seedCol.fill;
 
+    // Occhiali Conejo si disegnano sopra gli occhi, altri cappelli prima o sopra
+    const isGlasses = state.equippedHat === 'conejo_shades';
     const bodySvg = `
       <g transform="translate(110, 144) scale(${stage.scale}) translate(-110, -144)">
         ${renderStemAndLeavesSvg(stageIdx)}
         <ellipse cx="110" cy="140" rx="${stage.bodyRx}" ry="${stage.bodyRy}" fill="${bodyFill}" />
-        <ellipse cx="102" cy="130" rx="${stage.bodyRx * 0.55}" ry="${stage.bodyRy * 0.35}" fill="#ed794d" opacity="0.4" />
-        ${renderHatSvg(state.equippedHat, stageIdx)}
+        <ellipse cx="102" cy="130" rx="${stage.bodyRx * 0.55}" ry="${stage.bodyRy * 0.35}" fill="${seedCol.shade}" opacity="0.45" />
+        ${!isGlasses ? renderHatSvg(state.equippedHat, stageIdx) : ''}
         ${renderEyesSvg(expr)}
+        ${isGlasses ? renderHatSvg(state.equippedHat, stageIdx) : ''}
       </g>
     `;
     el.kiboSvg.innerHTML = bodySvg;
@@ -743,9 +897,10 @@
     const stage = getCurrentStage();
     const nextStage = getNextStage();
 
-    el.petNameDisplay.textContent = state.name;
+    el.petNameDisplay.textContent = isBenitoName(state.name) ? `${state.name} 🐰` : state.name;
     el.stageBadge.textContent = stage.name;
     el.hudMiniAvatar.textContent = stage.icon;
+    el.hudMiniAvatar.style.background = `${getSeedColor().shade}44`;
     el.coinsDisplay.textContent = Math.floor(state.coins);
 
     if (nextStage) {
@@ -766,7 +921,6 @@
     el.sleepBtn.classList.toggle('is-active', state.isSleeping);
     el.sleepBtnIcon.textContent = state.isSleeping ? '☀️' : '😴';
     el.sleepBtnLabel.textContent = state.isSleeping ? 'Sveglia' : 'Nanna';
-    el.soundToggleIcon.textContent = state.soundOn ? '🔊' : '🔇';
 
     const foodCount = Object.values(state.inventory).reduce((acc, q) => acc + q, 0);
     el.basketBadge.textContent = foodCount;
@@ -778,7 +932,24 @@
     renderPests();
   }
 
-  // ==================== ACTIONS ====================
+  // ==================== ACTIONS & EASTER EGGS ====================
+  function triggerSkyEasterEgg() {
+    const period = getDayPeriod();
+    const line = pick(SPANISH_TIME_EASTER_EGGS[period]);
+    playTone('tropical');
+    showSpeech(line, 3400);
+    spawnFxBurst(['🐰', '🌴', period === 'morning' ? '☕' : '🍹', '✨'], 5);
+
+    const now = Date.now();
+    if (now > skyEasterEggCooldown) {
+      skyEasterEggCooldown = now + 20000;
+      const got = awardCoins(2);
+      showToast(`🐰 ¡Wepa! Easter egg (+${got} 💰)`);
+      saveState();
+      renderUI();
+    }
+  }
+
   function petKibo() {
     if (state.isSleeping) {
       showSpeech('Shhh... sta dormendo 😴');
@@ -804,7 +975,10 @@
     state.petCooldownUntil = now + 18000;
     state.totalPets += 1;
 
-    const happyGain = state.equippedHat === 'flower_crown' ? 10 : 7;
+    let happyGain = 7;
+    if (state.equippedHat === 'flower_crown') happyGain = 10;
+    else if (state.equippedHat === 'cute_bow') happyGain = 9;
+
     state.happiness = clamp(state.happiness + happyGain, 0, 100);
     addXp(5);
 
@@ -815,10 +989,21 @@
       spawnFxBurst(['💛', '✨'], 3);
     }
 
-    playTone('pet');
+    const useSpanishVibe =
+      state.equippedHat === 'conejo_shades' ||
+      isBenitoName(state.name) ||
+      Math.random() < 0.2;
+
+    if (useSpanishVibe) {
+      playTone('tropical');
+      showSpeech(pick(SPANISH_TIME_EASTER_EGGS[getDayPeriod()]), 3000);
+    } else {
+      playTone('pet');
+      showSpeech(pick(PHRASES.pet));
+    }
+
     triggerAnimation('is-happy', 600);
     setTemporaryExpression('happy', 1100);
-    showSpeech(pick(PHRASES.pet));
     saveState();
     renderUI();
   }
@@ -934,19 +1119,33 @@
     state.inventory[foodId] -= 1;
     if (state.inventory[foodId] <= 0) delete state.inventory[foodId];
 
+    const period = getDayPeriod();
+    let extraEnergy = 0;
+    let extraHappy = 0;
+    let customSpeech = null;
+
+    if (food.id === 'morning_coffee' && period === 'morning') {
+      extraEnergy = 12;
+      customSpeech = 'Por la mañana café... ¡qué rico! ☕✨';
+    } else if (food.id === 'tropical_cup' && period === 'afternoon') {
+      extraHappy = 14;
+      customSpeech = 'Por la tarde ron... ¡sabor tropical! 🌴🍹';
+    }
+
+    const healBonus = state.equippedHat === 'cute_bow' ? 1.15 : 1;
     state.hunger = clamp(state.hunger + (food.hunger || 0), 0, 100);
     state.hydration = clamp(state.hydration + (food.hydration || 0), 0, 100);
-    state.happiness = clamp(state.happiness + (food.happiness || 0), 0, 100);
-    state.energy = clamp(state.energy + (food.energy || 0), 0, 100);
-    state.health = clamp(state.health + (food.health || 3), 0, 100);
+    state.happiness = clamp(state.happiness + (food.happiness || 0) + extraHappy, 0, 100);
+    state.energy = clamp(state.energy + (food.energy || 0) + extraEnergy, 0, 100);
+    state.health = clamp(state.health + Math.round((food.health || 3) * healBonus), 0, 100);
     addXp(food.xp || 10);
     advanceQuest('care', 1);
 
-    playTone('eat');
+    playTone(customSpeech ? 'tropical' : 'eat');
     triggerAnimation('is-eating', 750);
     setTemporaryExpression('eating', 1000);
     spawnFxBurst([food.icon, '💛', '✨'], 5);
-    showSpeech(food.health ? pick(PHRASES.heal) : pick(PHRASES.eat));
+    showSpeech(customSpeech || (food.health ? pick(PHRASES.heal) : pick(PHRASES.eat)));
     closeModal();
     saveState();
     renderUI();
@@ -1004,6 +1203,58 @@
     renderModalContent();
   }
 
+  // ==================== MULTI-SLOT MANAGEMENT ====================
+  function switchSlot(slotId) {
+    const found = rootSave.slots.find((s) => s.id === slotId);
+    if (!found) return;
+    saveState();
+    rootSave.activeSlotId = found.id;
+    state = found;
+    applyOfflineProgress(state);
+    playTone('evolve');
+    saveState();
+    renderUI();
+    closeModal();
+    showSpeech(`¡Hola! Sono ${state.name} 🌱`, 2400);
+  }
+
+  function createNewSlot(name, colorId) {
+    if (rootSave.slots.length >= MAX_SLOTS) {
+      showToast(`Puoi avere al massimo ${MAX_SLOTS} semini!`);
+      return;
+    }
+    saveState();
+    const fresh = createPetSlot(name || `Semino ${rootSave.slots.length + 1}`, colorId);
+    rootSave.slots.push(fresh);
+    rootSave.activeSlotId = fresh.id;
+    state = fresh;
+    playTone('evolve');
+    saveState();
+    renderUI();
+    closeModal();
+    if (isBenitoName(fresh.name)) {
+      showSpeech('¡YHLQMDLG! El Conejo Malo del prato! 🐰🌴', 3400);
+    } else {
+      showSpeech(`Benvenuto ${fresh.name}! 🌱`, 2600);
+    }
+  }
+
+  function deleteSlot(slotId) {
+    if (rootSave.slots.length <= 1) {
+      showToast('Devi tenere almeno un semino!');
+      return;
+    }
+    rootSave.slots = rootSave.slots.filter((s) => s.id !== slotId);
+    if (rootSave.activeSlotId === slotId) {
+      rootSave.activeSlotId = rootSave.slots[0].id;
+      state = rootSave.slots[0];
+    }
+    playTone('click');
+    saveState();
+    renderUI();
+    renderModalContent();
+  }
+
   // ==================== MODALS ====================
   function openModal(type, defaultTab = 'food') {
     currentModal = type;
@@ -1048,25 +1299,103 @@
         <div class="item-card">
           <div class="item-card__icon">💧</div>
           <div class="item-card__name">Acchiappa Gocce</div>
-          <div class="item-card__desc">3 vite, combo x3 e velocità crescente! Raccogli gocce, soli e stelle, evita le castagne.</div>
+          <div class="item-card__desc">3 vite, combo x3! Prendi 💧☀️⭐, evita 🌰.</div>
           <button class="item-card__btn" id="startDropGameBtn" type="button">Gioca (30s)</button>
         </div>
         <div class="item-card">
           <div class="item-card__icon">🌸</div>
           <div class="item-card__name">Memoria del Prato</div>
-          <div class="item-card__desc">Ripeti la sequenza musicale del giardino! Più round superi, più monete ed XP ottieni.</div>
+          <div class="item-card__desc">Ripeti la sequenza musicale a round crescenti!</div>
           <button class="item-card__btn item-card__btn--equip" id="startMemoryGameBtn" type="button">Gioca a Round</button>
+        </div>
+        <div class="item-card">
+          <div class="item-card__icon">🦘</div>
+          <div class="item-card__name">Salta le Spine</div>
+          <div class="item-card__desc">Doppio salto sopra 🌵 e 🌰, prendi le ⭐!</div>
+          <button class="item-card__btn" id="startRunnerGameBtn" type="button">Corri (30s)</button>
+        </div>
+        <div class="item-card">
+          <div class="item-card__icon">🐛</div>
+          <div class="item-card__name">Difendi il Prato</div>
+          <div class="item-card__desc">Colpisci 🐛 e 🐜 al volo, ma salva 🐞!</div>
+          <button class="item-card__btn item-card__btn--equip" id="startWhacGameBtn" type="button">Difendi (25s)</button>
         </div>
       `;
       el.modalBody.appendChild(grid);
-      document.getElementById('startDropGameBtn').addEventListener('click', () => {
-        closeModal();
-        startDropMinigame();
-      });
-      document.getElementById('startMemoryGameBtn').addEventListener('click', () => {
-        closeModal();
-        startMemoryMinigame();
-      });
+      document.getElementById('startDropGameBtn').addEventListener('click', () => { closeModal(); startDropMinigame(); });
+      document.getElementById('startMemoryGameBtn').addEventListener('click', () => { closeModal(); startMemoryMinigame(); });
+      document.getElementById('startRunnerGameBtn').addEventListener('click', () => { closeModal(); startRunnerMinigame(); });
+      document.getElementById('startWhacGameBtn').addEventListener('click', () => { closeModal(); startWhacMinigame(); });
+      return;
+    }
+
+    if (currentModal === 'seeds') {
+      el.modalTitle.textContent = `I miei Semini (${rootSave.slots.length}/${MAX_SLOTS})`;
+      el.modalTabs.hidden = true;
+
+      for (const slot of rootSave.slots) {
+        const isActive = slot.id === state.id;
+        const col = getSeedColor(slot.colorId);
+        let stage = STAGES[0];
+        for (const s of STAGES) {
+          if (slot.xp >= s.minXp && slot.health >= s.minHealth) stage = s;
+          else break;
+        }
+        const card = document.createElement('div');
+        card.className = `slot-card ${isActive ? 'is-active' : ''}`;
+        card.innerHTML = `
+          <div class="slot-card__left">
+            <div class="slot-dot" style="background: ${col.fill};">${stage.icon}</div>
+            <div>
+              <div style="font-family: var(--font-display); font-weight: 700; font-size: 15px;">${escapeHtml(slot.name)} ${isActive ? '★' : ''}</div>
+              <div style="font-size: 12px; color: var(--ui-muted);">${stage.name} · ❤️ ${Math.round(slot.health)}% · ${Math.floor(slot.coins)} 💰</div>
+            </div>
+          </div>
+          <div class="slot-card__actions">
+            ${isActive ? '<span class="stage-pill">Attivo</span>' : '<button class="btn-mini js-use-slot" type="button">Gioca</button>'}
+            ${rootSave.slots.length > 1 ? '<button class="btn-mini btn-mini--del js-del-slot" type="button" title="Elimina semino">🗑️</button>' : ''}
+          </div>
+        `;
+        const useBtn = card.querySelector('.js-use-slot');
+        if (useBtn) useBtn.addEventListener('click', () => switchSlot(slot.id));
+        const delBtn = card.querySelector('.js-del-slot');
+        if (delBtn) delBtn.addEventListener('click', () => {
+          if (confirm(`Eliminare la vita di ${slot.name}?`)) deleteSlot(slot.id);
+        });
+        el.modalBody.appendChild(card);
+      }
+
+      if (rootSave.slots.length < MAX_SLOTS) {
+        const swatches = SEED_COLORS.map((c) =>
+          `<button type="button" class="color-swatch ${selectedNewColor === c.id ? 'is-selected' : ''}" data-color="${c.id}" style="background:${c.fill}" title="${c.name}"></button>`
+        ).join('');
+
+        const creator = document.createElement('div');
+        creator.className = 'profile-card';
+        creator.innerHTML = `
+          <div style="font-family: var(--font-display); font-weight: 700;">🌱 Adotta un nuovo Semino</div>
+          <div class="input-row">
+            <input class="text-input" id="newSeedName" type="text" maxlength="16" placeholder="Nome (es. Benito, Mochi...)" />
+            <button class="btn-secondary" id="createSeedBtn" type="button">Crea</button>
+          </div>
+          <div class="color-swatch-row">${swatches}</div>
+        `;
+        el.modalBody.appendChild(creator);
+
+        creator.querySelectorAll('.color-swatch').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            selectedNewColor = btn.dataset.color;
+            creator.querySelectorAll('.color-swatch').forEach((b) => {
+              b.classList.toggle('is-selected', b.dataset.color === selectedNewColor);
+            });
+          });
+        });
+
+        document.getElementById('createSeedBtn').addEventListener('click', () => {
+          const val = document.getElementById('newSeedName').value.trim();
+          createNewSlot(val || `Kibo ${rootSave.slots.length + 1}`, selectedNewColor);
+        });
+      }
       return;
     }
 
@@ -1139,7 +1468,7 @@
       }
       el.modalBody.appendChild(grid);
     } else if (currentModal === 'basket') {
-      el.modalTitle.textContent = 'Cestino di Kibo';
+      el.modalTitle.textContent = 'Cestino di ' + state.name;
       renderTabs([
         { id: 'food', label: '🍓 Merende' },
         { id: 'hats', label: '🧢 Cappelli' },
@@ -1149,7 +1478,7 @@
       if (currentTab === 'food') {
         const ownedFoods = FOODS.filter((f) => (state.inventory[f.id] || 0) > 0);
         if (ownedFoods.length === 0) {
-          el.modalBody.innerHTML = `<div class="empty-state">Il cestino delle merende è vuoto!<br/>Passa dal <b>Negozio</b> per comprare cibo o tisane.</div>`;
+          el.modalBody.innerHTML = `<div class="empty-state">Il cestino delle merende è vuoto!<br/>Passa dal <b>Negozio</b> per comprare cibo o cure.</div>`;
           return;
         }
         const grid = document.createElement('div');
@@ -1162,7 +1491,7 @@
             <div class="item-card__icon">${f.icon}</div>
             <div class="item-card__name">${f.name} (x${qty})</div>
             <div class="item-card__desc">${f.desc}</div>
-            <button class="item-card__btn" type="button">Dai a ${state.name}</button>
+            <button class="item-card__btn" type="button">Dai a ${escapeHtml(state.name)}</button>
           `;
           card.querySelector('button').addEventListener('click', () => feedKibo(f.id));
           grid.appendChild(card);
@@ -1235,7 +1564,7 @@
           <div class="profile-row"><span>Stadio attuale</span><strong>${stage.icon} ${stage.name}</strong></div>
           <div class="profile-row"><span>Salute</span><strong>❤️ ${Math.round(state.health)}% ${isSick() ? '(Appassito)' : ''}</strong></div>
           <div class="profile-row"><span>Esperienza (XP)</span><strong>${state.xp}${nextStage ? ` / ${nextStage.minXp}` : ' (MAX)'}</strong></div>
-          <div class="profile-row"><span>Bonus cappellino</span><strong>${hatObj ? hatObj.perk : 'Nessuno'}</strong></div>
+          <div class="profile-row"><span>Bonus accessorio</span><strong>${hatObj ? hatObj.perk : 'Nessuno'}</strong></div>
           <div class="profile-row"><span>Sfide completate</span><strong>${state.questsCompleted} 🎯</strong></div>
         </div>
         ${state.quest ? `
@@ -1249,50 +1578,129 @@
     } else if (currentModal === 'settings') {
       el.modalTitle.textContent = 'Impostazioni';
       el.modalTabs.hidden = true;
+      const tm = rootSave.settings.timeMode;
+      const snd = rootSave.settings.soundOn;
+
       el.modalBody.innerHTML = `
         <div class="profile-card">
-          <label for="renameInput" style="font-family: var(--font-display); font-weight: 600;">Nome della creaturina</label>
+          <div style="font-family: var(--font-display); font-weight: 600;">🌤️ Cielo e Momento del giorno</div>
+          <div class="settings-pill-group" id="skyModeGroup">
+            <button type="button" class="settings-choice ${tm === 'auto' ? 'is-active' : ''}" data-sky="auto">🕒 Auto</button>
+            <button type="button" class="settings-choice ${tm === 'day' ? 'is-active' : ''}" data-sky="day">☀️ Giorno</button>
+            <button type="button" class="settings-choice ${tm === 'sunset' ? 'is-active' : ''}" data-sky="sunset">🌅 Sera</button>
+            <button type="button" class="settings-choice ${tm === 'night' ? 'is-active' : ''}" data-sky="night">🌙 Notte</button>
+          </div>
+          <div style="font-family: var(--font-display); font-weight: 600; margin-top: 6px;">🔊 Effetti Sonori</div>
+          <div class="settings-pill-group" style="grid-template-columns: 1fr 1fr;" id="soundModeGroup">
+            <button type="button" class="settings-choice ${snd ? 'is-active' : ''}" data-snd="on">🔊 Attivi</button>
+            <button type="button" class="settings-choice ${!snd ? 'is-active' : ''}" data-snd="off">🔇 Muto</button>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <label for="renameInput" style="font-family: var(--font-display); font-weight: 600;">Nome di questo semino</label>
           <div class="input-row">
             <input class="text-input" id="renameInput" type="text" maxlength="16" value="${escapeHtml(state.name)}" />
             <button class="btn-secondary" id="saveNameBtn" type="button">Salva</button>
           </div>
+          <button class="btn-secondary" id="openSeedsFromSettings" type="button" style="background:#4e88d6;">🌱 Gestisci più Semini (${rootSave.slots.length}/${MAX_SLOTS})</button>
         </div>
+
         <div class="profile-card">
-          <div style="font-family: var(--font-display); font-weight: 600;">Consigli per crescere al meglio</div>
-          <div style="font-size: 13px; color: var(--ui-muted); line-height: 1.45;">
-            • Mantieni tutte le barre sopra il <b>75%</b> per attivare <b>Rigoglio (x1.5 XP)</b>.<br/>
-            • Ogni evoluzione richiede sia gli <b>XP</b> sia un livello minimo di <b>Salute ❤️</b>.<br/>
-            • Tocca i <b>parassiti (🐛/🐜)</b> sul prato per scacciarli prima che indeboliscano Kibo!<br/>
-            • Cappelli e decorazioni offrono bonus reali contro caldo, fame e parassiti.
+          <div style="font-family: var(--font-display); font-weight: 600;">💾 Backup salvataggi (tra PC/domini)</div>
+          <div style="font-size: 12px; color: var(--ui-muted);">I salvataggi restano sul tuo browser anche aggiornando GitHub Pages. Usa questo box per spostarli altrove:</div>
+          <textarea class="backup-textarea" id="backupBox" placeholder="Premi Esporta oppure incolla qui un backup JSON e premi Importa..."></textarea>
+          <div class="input-row">
+            <button class="btn-secondary" id="exportBackupBtn" type="button" style="flex:1;">Esporta</button>
+            <button class="btn-secondary" id="importBackupBtn" type="button" style="flex:1; background:#e49326;">Importa</button>
           </div>
         </div>
-        <button class="btn-danger" id="resetGameBtn" type="button">Ricomincia partita da capo</button>
+
+        <button class="btn-danger" id="resetGameBtn" type="button">Ricomincia questo semino da capo</button>
       `;
+
+      document.querySelectorAll('#skyModeGroup .settings-choice').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          rootSave.settings.timeMode = btn.dataset.sky;
+          playTone('click');
+          saveState();
+          renderTimeTheme();
+          renderModalContent();
+        });
+      });
+
+      document.querySelectorAll('#soundModeGroup .settings-choice').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          rootSave.settings.soundOn = btn.dataset.snd === 'on';
+          if (rootSave.settings.soundOn) playTone('click');
+          saveState();
+          renderModalContent();
+        });
+      });
+
+      document.getElementById('openSeedsFromSettings').addEventListener('click', () => openModal('seeds'));
 
       document.getElementById('saveNameBtn').addEventListener('click', () => {
         const val = document.getElementById('renameInput').value.trim();
         if (!val) return;
         state.name = val;
-        playTone('coin');
+        playTone(isBenitoName(val) ? 'tropical' : 'coin');
         saveState();
         renderUI();
         closeModal();
-        showToast(`Nome aggiornato in ${state.name}!`);
+        if (isBenitoName(val)) {
+          showSpeech('¡YHLQMDLG! El Conejo Malo del prato 🐰🌴', 3200);
+        } else {
+          showToast(`Nome aggiornato in ${state.name}!`);
+        }
+      });
+
+      document.getElementById('exportBackupBtn').addEventListener('click', () => {
+        const box = document.getElementById('backupBox');
+        box.value = JSON.stringify(rootSave);
+        box.select();
+        showToast('Backup generato! Copialo al sicuro.');
+      });
+
+      document.getElementById('importBackupBtn').addEventListener('click', () => {
+        try {
+          const raw = document.getElementById('backupBox').value.trim();
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed.slots) || parsed.slots.length === 0) throw new Error('Invalid');
+          rootSave = {
+            version: 2,
+            activeSlotId: parsed.activeSlotId || parsed.slots[0].id,
+            slots: parsed.slots.slice(0, MAX_SLOTS).map(sanitizePetSlot),
+            settings: { ...rootSave.settings, ...(parsed.settings || {}) },
+          };
+          state = rootSave.slots.find((s) => s.id === rootSave.activeSlotId) || rootSave.slots[0];
+          saveState();
+          renderUI();
+          closeModal();
+          showToast('Backup importato con successo! 🎉');
+        } catch {
+          showToast('Codice backup non valido!');
+        }
       });
 
       document.getElementById('resetGameBtn').addEventListener('click', () => {
-        if (!confirm('Vuoi davvero ricominciare da capo con un nuovo Kibo?')) return;
-        state = createDefaultState();
+        if (!confirm(`Vuoi davvero ricominciare da capo la vita di ${state.name}?`)) return;
+        const fresh = createPetSlot(state.name, state.colorId);
+        fresh.id = state.id;
+        const idx = rootSave.slots.findIndex((s) => s.id === state.id);
+        if (idx >= 0) rootSave.slots[idx] = fresh;
+        state = fresh;
         saveState();
         renderUI();
         closeModal();
-        showToast('Nuovo inizio! Prenditi cura di Kibo 🌱');
+        showToast(`Nuovo inizio per ${state.name}! 🌱`);
       });
     }
   }
 
   function escapeHtml(str) {
-    return str.replace(/[&<>"']/g, (c) => ({
+    return String(str).replace(/[&<>"']/g, (c) => ({
       '&': '&amp;',
       '<': '&lt;',
       '>': '&gt;',
@@ -1302,7 +1710,7 @@
   }
 
   // ==================== MINI-GIOCHI ====================
-  let activeMinigame = null; // 'drop' | 'memory' | null
+  let activeMinigame = null; // 'drop' | 'memory' | 'runner' | 'whac' | null
   let mgRaf = null;
   let mgState = null;
 
@@ -1312,7 +1720,7 @@
       return false;
     }
     if (isSick()) {
-      showToast('Kibo è appassito 🤒! Curalo prima con una Tisana o riposo.');
+      showToast('Kibo è appassito 🤒! Curalo prima con una Tisana o Vitamina.');
       return false;
     }
     if (state.energy < 14) {
@@ -1322,17 +1730,29 @@
     return true;
   }
 
+  function resetMinigameBoards() {
+    el.minigameCanvas.hidden = true;
+    el.memoryBoard.hidden = true;
+    el.whacBoard.hidden = true;
+    el.mgLivesStat.hidden = true;
+    el.mgCombo.hidden = true;
+  }
+
+  // ---- MINI-GIOCO 1: ACCHIAPPA GOCCE ----
   function startDropMinigame() {
     if (!canPlayMinigame()) return;
 
     playTone('click');
     activeMinigame = 'drop';
     el.minigameOverlay.hidden = false;
+    resetMinigameBoards();
     el.minigameCanvas.hidden = false;
-    el.memoryBoard.hidden = true;
     el.mgLivesStat.hidden = false;
     el.mgLeftStat.innerHTML = '⏱️ <span id="mgTimer">30</span>s';
-    el.mgTimer = document.getElementById('mgTimer');
+    el.mgMidStat.innerHTML = '💧 <span id="mgScore">0</span> <span class="mg-combo" id="mgCombo" hidden>x1</span>';
+    el.mgScore = document.getElementById('mgScore');
+    el.mgCombo = document.getElementById('mgCombo');
+    el.mgLivesStat.textContent = '❤️❤️❤️';
     el.mgHint.textContent = 'Trascina o usa ⬅️ ➡️! Prendi 💧☀️⭐ in combo, evita le 🌰 (3 vite)!';
 
     const canvas = el.minigameCanvas;
@@ -1351,20 +1771,13 @@
       secAcc: 0,
     };
 
-    el.mgScore.textContent = '0';
-    el.mgCombo.hidden = true;
-    el.mgLivesStat.textContent = '❤️❤️❤️';
-
     const loop = (now) => {
       if (activeMinigame !== 'drop') return;
       const dt = Math.min(0.05, (now - mgState.lastFrame) / 1000);
       mgState.lastFrame = now;
-
       updateDropMinigame(dt, canvas);
       drawDropMinigame(ctx, canvas);
-      if (activeMinigame === 'drop') {
-        mgRaf = requestAnimationFrame(loop);
-      }
+      if (activeMinigame === 'drop') mgRaf = requestAnimationFrame(loop);
     };
 
     mgRaf = requestAnimationFrame(loop);
@@ -1379,7 +1792,8 @@
     if (mgState.secAcc >= 1) {
       mgState.secAcc -= 1;
       mgState.timeLeft -= 1;
-      el.mgTimer.textContent = String(Math.max(0, mgState.timeLeft));
+      const tEl = document.getElementById('mgTimer');
+      if (tEl) tEl.textContent = String(Math.max(0, mgState.timeLeft));
       if (mgState.timeLeft <= 0) {
         finishDropMinigame(true);
         return;
@@ -1387,7 +1801,7 @@
     }
 
     const elapsed = 30 - mgState.timeLeft;
-    const speedScale = 1 + elapsed * 0.032; // accelera progressivamente!
+    const speedScale = 1 + elapsed * 0.032;
     const spawnInterval = Math.max(0.28, 0.48 - elapsed * 0.006);
 
     mgState.spawnAcc += dt;
@@ -1455,23 +1869,8 @@
     }
   }
 
-  function drawDropMinigame(ctx, canvas) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = '#b4d65c';
-    ctx.fillRect(0, canvas.height - 46, canvas.width, 46);
-
-    ctx.font = '28px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    for (const it of mgState.items) {
-      const glyph = it.kind === 'drop' ? '💧' : it.kind === 'sun' ? '☀️' : it.kind === 'star' ? '⭐' : '🌰';
-      ctx.fillText(glyph, it.x, it.y);
-    }
-
-    const px = mgState.playerX;
-    const py = canvas.height - 54;
-
+  function drawCanvasMiniKibo(ctx, px, py) {
+    const col = getSeedColor();
     ctx.fillStyle = 'rgba(72, 95, 25, 0.25)';
     ctx.beginPath();
     ctx.ellipse(px, py + 23, 30, 7, 0, 0, Math.PI * 2);
@@ -1492,7 +1891,7 @@
     ctx.ellipse(px + 14, py - 42, 10, 5, -0.5, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#e26236';
+    ctx.fillStyle = col.fill;
     ctx.beginPath();
     ctx.ellipse(px, py, 28, 21, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -1511,11 +1910,26 @@
     ctx.fill();
   }
 
+  function drawDropMinigame(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#b4d65c';
+    ctx.fillRect(0, canvas.height - 46, canvas.width, 46);
+
+    ctx.font = '28px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (const it of mgState.items) {
+      const glyph = it.kind === 'drop' ? '💧' : it.kind === 'sun' ? '☀️' : it.kind === 'star' ? '⭐' : '🌰';
+      ctx.fillText(glyph, it.x, it.y);
+    }
+
+    drawCanvasMiniKibo(ctx, mgState.playerX, canvas.height - 54);
+  }
+
   function finishDropMinigame(survived, knockedOut = false) {
     activeMinigame = null;
     cancelAnimationFrame(mgRaf);
     el.minigameOverlay.hidden = true;
-
     if (!mgState) return;
     if (!survived && !knockedOut) {
       showToast('Partita annullata.');
@@ -1550,21 +1964,14 @@
     playTone('click');
     activeMinigame = 'memory';
     el.minigameOverlay.hidden = false;
-    el.minigameCanvas.hidden = true;
+    resetMinigameBoards();
     el.memoryBoard.hidden = false;
-    el.mgLivesStat.hidden = true;
-    el.mgCombo.hidden = true;
     el.mgLeftStat.innerHTML = '🌸 Round <span id="mgMemRound">1</span>';
-    el.mgScore.textContent = '0';
+    el.mgMidStat.innerHTML = '⭐ <span id="mgScore">0</span>';
+    el.mgScore = document.getElementById('mgScore');
     el.mgHint.textContent = 'Guarda i simboli illuminarsi e ripeti la sequenza nell’ordine esatto!';
 
-    memState = {
-      sequence: [],
-      userIndex: 0,
-      round: 0,
-      locked: true,
-    };
-
+    memState = { sequence: [], userIndex: 0, round: 0, locked: true };
     nextMemoryRound();
   }
 
@@ -1648,6 +2055,314 @@
     renderUI();
   }
 
+  // ---- MINI-GIOCO 3: SALTA LE SPINE (RUNNER) ----
+  let runState = null;
+
+  function startRunnerMinigame() {
+    if (!canPlayMinigame()) return;
+
+    playTone('click');
+    activeMinigame = 'runner';
+    el.minigameOverlay.hidden = false;
+    resetMinigameBoards();
+    el.minigameCanvas.hidden = false;
+    el.mgLivesStat.hidden = false;
+    el.mgLeftStat.innerHTML = '⏱️ <span id="mgTimer">30</span>s';
+    el.mgMidStat.innerHTML = '⭐ <span id="mgScore">0</span>';
+    el.mgScore = document.getElementById('mgScore');
+    el.mgLivesStat.textContent = '❤️❤️❤️';
+    el.mgHint.textContent = 'Tocca lo schermo o premi SPAZIO / ⬆️ per saltare (anche doppio salto)!';
+
+    const canvas = el.minigameCanvas;
+    const ctx = canvas.getContext('2d');
+    const groundY = canvas.height - 66;
+
+    runState = {
+      groundY,
+      playerY: groundY,
+      vy: 0,
+      jumpsLeft: 2,
+      invuln: 0,
+      lives: 3,
+      score: 0,
+      timeLeft: 30,
+      secAcc: 0,
+      spawnAcc: 0,
+      entities: [],
+      lastFrame: performance.now(),
+    };
+
+    const loop = (now) => {
+      if (activeMinigame !== 'runner') return;
+      const dt = Math.min(0.05, (now - runState.lastFrame) / 1000);
+      runState.lastFrame = now;
+      updateRunnerMinigame(dt, canvas);
+      drawRunnerMinigame(ctx, canvas);
+      if (activeMinigame === 'runner') mgRaf = requestAnimationFrame(loop);
+    };
+    mgRaf = requestAnimationFrame(loop);
+  }
+
+  function triggerRunnerJump() {
+    if (activeMinigame !== 'runner' || !runState) return;
+    if (runState.jumpsLeft > 0) {
+      runState.vy = -510;
+      runState.jumpsLeft -= 1;
+      playTone('jump');
+    }
+  }
+
+  function updateRunnerMinigame(dt, canvas) {
+    runState.secAcc += dt;
+    if (runState.secAcc >= 1) {
+      runState.secAcc -= 1;
+      runState.timeLeft -= 1;
+      runState.score += 1;
+      el.mgScore.textContent = String(runState.score);
+      const tEl = document.getElementById('mgTimer');
+      if (tEl) tEl.textContent = String(Math.max(0, runState.timeLeft));
+      if (runState.timeLeft <= 0) {
+        finishRunnerMinigame(true);
+        return;
+      }
+    }
+
+    if (runState.invuln > 0) runState.invuln -= dt;
+
+    runState.vy += 1250 * dt;
+    runState.playerY += runState.vy * dt;
+    if (runState.playerY >= runState.groundY) {
+      runState.playerY = runState.groundY;
+      runState.vy = 0;
+      runState.jumpsLeft = 2;
+    }
+
+    const elapsed = 30 - runState.timeLeft;
+    const speed = 220 + elapsed * 6.5;
+
+    runState.spawnAcc += dt;
+    if (runState.spawnAcc >= Math.max(0.75, 1.35 - elapsed * 0.018)) {
+      runState.spawnAcc = 0;
+      const isBonus = Math.random() < 0.38;
+      runState.entities.push({
+        x: canvas.width + 24,
+        y: isBonus ? runState.groundY - (65 + Math.random() * 85) : runState.groundY + 2,
+        kind: isBonus ? (Math.random() < 0.45 ? 'star' : 'drop') : (Math.random() < 0.5 ? 'cactus' : 'nut'),
+      });
+    }
+
+    const px = 76;
+    for (let i = runState.entities.length - 1; i >= 0; i--) {
+      const ent = runState.entities[i];
+      ent.x -= speed * dt;
+
+      if (Math.hypot(ent.x - px, ent.y - runState.playerY) < 34) {
+        if (ent.kind === 'star' || ent.kind === 'drop') {
+          runState.score += ent.kind === 'star' ? 4 : 2;
+          el.mgScore.textContent = String(runState.score);
+          playTone('coin');
+          runState.entities.splice(i, 1);
+          continue;
+        } else if (runState.invuln <= 0) {
+          runState.lives -= 1;
+          runState.invuln = 1.0;
+          el.mgLivesStat.textContent = '❤️'.repeat(Math.max(0, runState.lives)) || '💔';
+          playTone('bonk');
+          runState.entities.splice(i, 1);
+          if (runState.lives <= 0) {
+            finishRunnerMinigame(false, true);
+            return;
+          }
+          continue;
+        }
+      }
+
+      if (ent.x < -30) {
+        runState.entities.splice(i, 1);
+      }
+    }
+  }
+
+  function drawRunnerMinigame(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Prato
+    ctx.fillStyle = '#b4d65c';
+    ctx.fillRect(0, runState.groundY + 24, canvas.width, canvas.height - runState.groundY);
+
+    ctx.font = '30px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (const ent of runState.entities) {
+      const g = ent.kind === 'star' ? '⭐' : ent.kind === 'drop' ? '💧' : ent.kind === 'cactus' ? '🌵' : '🌰';
+      ctx.fillText(g, ent.x, ent.y);
+    }
+
+    if (runState.invuln <= 0 || Math.floor(runState.invuln * 10) % 2 === 0) {
+      drawCanvasMiniKibo(ctx, 76, runState.playerY);
+    }
+  }
+
+  function finishRunnerMinigame(survived, knockedOut = false) {
+    activeMinigame = null;
+    cancelAnimationFrame(mgRaf);
+    el.minigameOverlay.hidden = true;
+    if (!runState) return;
+    if (!survived && !knockedOut) {
+      showToast('Corsa annullata.');
+      return;
+    }
+
+    const baseCoins = survived ? Math.max(5, Math.round(runState.score * 0.45)) : Math.max(2, Math.floor(runState.score * 0.25));
+    const gotCoins = awardCoins(baseCoins);
+    const hatXpBonus = state.equippedHat === 'cap_green' ? 1.1 : 1;
+    const gotXp = addXp(Math.round((survived ? 24 + Math.floor(runState.score / 4) : 10) * hatXpBonus));
+
+    state.happiness = clamp(state.happiness + (survived ? 18 : 8), 0, 100);
+    state.energy = clamp(state.energy - 14, 0, 100);
+    if (survived) advanceQuest('minigame', 1);
+
+    playTone(survived ? 'evolve' : 'bonk');
+    showToast(`🦘 Corsa finita! +${gotCoins} 💰 e +${gotXp} XP`);
+    showSpeech(survived ? `Che salti agili! +${gotCoins} 💰` : 'Ahi, che spine!');
+    if (survived) triggerAnimation('is-happy', 700);
+    saveState();
+    renderUI();
+  }
+
+  // ---- MINI-GIOCO 4: DIFENDI IL PRATO (WHAC-A-PEST) ----
+  let whacState = null;
+  let whacTimerId = null;
+  let whacSpawnId = null;
+
+  function startWhacMinigame() {
+    if (!canPlayMinigame()) return;
+
+    playTone('click');
+    activeMinigame = 'whac';
+    el.minigameOverlay.hidden = false;
+    resetMinigameBoards();
+    el.whacBoard.hidden = false;
+    el.mgLeftStat.innerHTML = '⏱️ <span id="mgTimer">25</span>s';
+    el.mgMidStat.innerHTML = '🎯 <span id="mgScore">0</span>';
+    el.mgScore = document.getElementById('mgScore');
+    el.whacStatus.textContent = 'Tocca 🐛 🐜 🌻, NON toccare 🐞!';
+    el.mgHint.textContent = 'Colpisci i parassiti prima che spariscano; evita le coccinelle amiche!';
+
+    whacState = {
+      timeLeft: 25,
+      score: 0,
+      holes: Array(9).fill(null),
+    };
+    renderWhacHoles();
+
+    whacTimerId = setInterval(() => {
+      if (activeMinigame !== 'whac') return;
+      whacState.timeLeft -= 1;
+      const tEl = document.getElementById('mgTimer');
+      if (tEl) tEl.textContent = String(Math.max(0, whacState.timeLeft));
+      if (whacState.timeLeft <= 0) {
+        finishWhacMinigame(true);
+      }
+    }, 1000);
+
+    const scheduleSpawn = () => {
+      if (activeMinigame !== 'whac') return;
+      spawnWhacMole();
+      const delay = Math.max(420, 760 - (25 - whacState.timeLeft) * 14);
+      whacSpawnId = setTimeout(scheduleSpawn, delay);
+    };
+    scheduleSpawn();
+  }
+
+  function spawnWhacMole() {
+    if (activeMinigame !== 'whac' || !whacState) return;
+    const emptyIdx = [];
+    whacState.holes.forEach((h, i) => { if (!h) emptyIdx.push(i); });
+    if (emptyIdx.length === 0) return;
+
+    const idx = pick(emptyIdx);
+    const roll = Math.random();
+    let item;
+    if (roll < 0.5) item = { kind: 'pest', icon: '🐛', pts: 1, cls: 'has-pest' };
+    else if (roll < 0.74) item = { kind: 'pest', icon: '🐜', pts: 2, cls: 'has-pest' };
+    else if (roll < 0.87) item = { kind: 'gold', icon: '🌻', pts: 4, cls: 'has-gold' };
+    else item = { kind: 'friend', icon: '🐞', pts: -3, cls: 'has-friend' };
+
+    whacState.holes[idx] = item;
+    renderWhacHoles();
+
+    const stayMs = Math.max(700, 1250 - (25 - whacState.timeLeft) * 20);
+    setTimeout(() => {
+      if (activeMinigame !== 'whac' || !whacState) return;
+      if (whacState.holes[idx] === item) {
+        whacState.holes[idx] = null;
+        renderWhacHoles();
+      }
+    }, stayMs);
+  }
+
+  function renderWhacHoles() {
+    if (!whacState) return;
+    el.whacGrid.querySelectorAll('.whac-hole').forEach((btn) => {
+      const idx = Number(btn.dataset.hole);
+      const item = whacState.holes[idx];
+      btn.className = 'whac-hole';
+      btn.textContent = item ? item.icon : '';
+      if (item) btn.classList.add(item.cls);
+    });
+  }
+
+  function handleWhacClick(idx) {
+    if (activeMinigame !== 'whac' || !whacState) return;
+    const item = whacState.holes[idx];
+    if (!item) return;
+
+    whacState.holes[idx] = null;
+    whacState.score = Math.max(0, whacState.score + item.pts);
+    el.mgScore.textContent = String(whacState.score);
+
+    if (item.kind === 'friend') {
+      playTone('bonk');
+      el.whacStatus.textContent = 'Ops! Quella era una coccinella amica! (-3)';
+    } else if (item.kind === 'gold') {
+      playTone('coin');
+      el.whacStatus.textContent = 'Girasole d’oro! +4 ✨';
+    } else {
+      playTone('pet');
+      el.whacStatus.textContent = 'Preso! Continua così! 💪';
+    }
+    renderWhacHoles();
+  }
+
+  function finishWhacMinigame(completed) {
+    clearInterval(whacTimerId);
+    clearTimeout(whacSpawnId);
+    activeMinigame = null;
+    el.minigameOverlay.hidden = true;
+
+    if (!completed || !whacState) {
+      showToast('Difesa annullata.');
+      return;
+    }
+
+    const baseCoins = Math.max(3, Math.round(whacState.score * 0.6));
+    const gotCoins = awardCoins(baseCoins);
+    const hatXpBonus = state.equippedHat === 'cap_green' ? 1.1 : 1;
+    const gotXp = addXp(Math.round((18 + Math.floor(whacState.score / 2)) * hatXpBonus));
+
+    state.happiness = clamp(state.happiness + 16, 0, 100);
+    state.energy = clamp(state.energy - 12, 0, 100);
+    advanceQuest('minigame', 1);
+
+    playTone('evolve');
+    showToast(`🐛 Prato difeso! ${whacState.score} pt → +${gotCoins} 💰, +${gotXp} XP`);
+    showSpeech(`Prato al sicuro! +${gotCoins} 💰`);
+    triggerAnimation('is-happy', 700);
+    saveState();
+    renderUI();
+  }
+
   // ==================== GAME LOOP & EVENTS ====================
   function maybeTriggerWeatherEvent() {
     if (state.weather !== 'clear') {
@@ -1702,8 +2417,8 @@
 
       let happyDrain = hasDaisy ? 0.2 : 0.28;
       let energyDrain = hasLantern ? 0.22 : 0.3;
+      if (state.equippedHat === 'lofi_phones') energyDrain *= 0.7;
 
-      // Danno da parassiti attivi
       if (state.pests.length > 0) {
         hungerDrain += state.pests.length * 0.25;
         happyDrain += state.pests.length * 0.25;
@@ -1718,18 +2433,20 @@
       state.happiness = clamp(state.happiness - happyDrain, 0, 100);
       state.energy = clamp(state.energy - energyDrain, 0, 100);
 
-      // Gestione Salute & Rigoglio
       if (state.hunger < 20 || state.hydration < 20 || state.pests.length >= 2) {
         state.health = clamp(state.health - 0.65, 0, 100);
       } else if (isFlourishing()) {
         state.health = clamp(state.health + 0.45, 0, 100);
         advanceQuest('flourish', 1);
         if (Math.random() < 0.14) awardCoins(1);
-      } else if (state.equippedHat === 'flower_crown' && state.hunger > 40 && state.hydration > 40) {
+      } else if (
+        (state.equippedHat === 'flower_crown' || state.equippedHat === 'cute_bow') &&
+        state.hunger > 40 &&
+        state.hydration > 40
+      ) {
         state.health = clamp(state.health + 0.2, 0, 100);
       }
 
-      // Sporcizia sul prato
       const messChance = state.weather === 'rain' ? 0.08 : 0.04;
       if (state.messes.length < 3 && Math.random() < messChance) {
         const onLeft = Math.random() < 0.5;
@@ -1741,13 +2458,12 @@
         });
       }
 
-      // Parassiti interattivi sul prato
       const pestChance = hasButterfly ? 0.018 : 0.036;
       if (state.pests.length < 2 && Math.random() < pestChance) {
         const onLeft = Math.random() < 0.5;
         const pestType = Math.random() < 0.55
           ? { icon: '🐛', name: 'Bruco Goloso', hp: 2 }
-          : { icon: '🐜', name: 'Formica Birichina', hp: 3 };
+          : { icon: '🐜', name: 'Insetto Birichino', hp: 3 };
         state.pests.push({
           id: `${Date.now()}_${Math.random()}`,
           ...pestType,
@@ -1758,13 +2474,13 @@
         showToast(`${pestType.icon} È apparso un ${pestType.name}! Toccalo per scacciarlo!`);
       }
 
-      // Promemoria bisogni
       if (!el.speechBubble.classList.contains('is-visible') && Math.random() < 0.12) {
         if (isSick()) showSpeech(pick(PHRASES.sick));
         else if (state.hunger < 30) showSpeech(pick(PHRASES.hungry));
         else if (state.hydration < 30) showSpeech(pick(PHRASES.thirsty));
         else if (state.energy < 25) showSpeech(pick(PHRASES.tired));
         else if (state.happiness < 30) showSpeech(pick(PHRASES.sad));
+        else if (Math.random() < 0.35) showSpeech(pick(SPANISH_TIME_EASTER_EGGS[getDayPeriod()]), 3000);
       }
     }
 
@@ -1788,6 +2504,7 @@
 
   // ==================== EVENT LISTENERS ====================
   el.kiboButton.addEventListener('click', petKibo);
+  el.celestialBody.addEventListener('click', triggerSkyEasterEgg);
   el.waterBtn.addEventListener('click', waterKibo);
   el.cleanBtn.addEventListener('click', cleanGarden);
   el.sleepBtn.addEventListener('click', toggleSleep);
@@ -1797,25 +2514,8 @@
   el.basketBtn.addEventListener('click', () => openModal('basket', 'food'));
   el.openStatusBtn.addEventListener('click', () => openModal('status'));
   el.questPill.addEventListener('click', () => openModal('status'));
+  el.seedsBtn.addEventListener('click', () => openModal('seeds'));
   el.settingsBtn.addEventListener('click', () => openModal('settings'));
-
-  el.timeToggleBtn.addEventListener('click', () => {
-    const order = ['auto', 'night', 'day', 'sunset'];
-    const nextIdx = (order.indexOf(state.timeMode) + 1) % order.length;
-    state.timeMode = order[nextIdx];
-    const labels = { auto: 'Automatico', night: 'Notte stellata', day: 'Giorno di sole', sunset: 'Tramonto' };
-    playTone('click');
-    showToast(`Cielo: ${labels[state.timeMode]}`);
-    saveState();
-    renderTimeTheme();
-  });
-
-  el.soundToggleBtn.addEventListener('click', () => {
-    state.soundOn = !state.soundOn;
-    if (state.soundOn) playTone('click');
-    saveState();
-    renderUI();
-  });
 
   el.modalCloseBtn.addEventListener('click', closeModal);
   el.modalBackdrop.addEventListener('click', (e) => {
@@ -1825,16 +2525,28 @@
   el.mgQuitBtn.addEventListener('click', () => {
     if (activeMinigame === 'drop') finishDropMinigame(false, false);
     else if (activeMinigame === 'memory') finishMemoryMinigame(true);
+    else if (activeMinigame === 'runner') finishRunnerMinigame(false, false);
+    else if (activeMinigame === 'whac') finishWhacMinigame(false);
   });
 
   el.memoryGrid.querySelectorAll('.memory-pad').forEach((btn) => {
     btn.addEventListener('click', () => handleMemoryPadClick(Number(btn.dataset.pad)));
   });
 
+  el.whacGrid.querySelectorAll('.whac-hole').forEach((btn) => {
+    btn.addEventListener('click', () => handleWhacClick(Number(btn.dataset.hole)));
+  });
+
   window.addEventListener('keydown', (e) => {
-    if (activeMinigame !== 'drop' || !mgState) return;
-    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') mgState.keys.left = true;
-    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') mgState.keys.right = true;
+    if (activeMinigame === 'drop' && mgState) {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') mgState.keys.left = true;
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') mgState.keys.right = true;
+    } else if (activeMinigame === 'runner') {
+      if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        triggerRunnerJump();
+      }
+    }
   });
 
   window.addEventListener('keyup', (e) => {
@@ -1850,14 +2562,23 @@
     mgState.playerX = clamp(relX, 34, el.minigameCanvas.width - 34);
   };
 
-  el.minigameCanvas.addEventListener('pointerdown', (e) => movePlayerToPointer(e.clientX));
+  el.minigameCanvas.addEventListener('pointerdown', (e) => {
+    if (activeMinigame === 'drop') movePlayerToPointer(e.clientX);
+    else if (activeMinigame === 'runner') triggerRunnerJump();
+  });
   el.minigameCanvas.addEventListener('pointermove', (e) => {
-    if (e.buttons > 0 || e.pointerType === 'touch') movePlayerToPointer(e.clientX);
+    if (activeMinigame === 'drop' && (e.buttons > 0 || e.pointerType === 'touch')) {
+      movePlayerToPointer(e.clientX);
+    }
   });
 
   // ==================== INIT ====================
+  saveState();
   renderUI();
-  showSpeech(`Ciao! Sono ${state.name} 🌱`, 2600);
+  const initGreeting = isBenitoName(state.name)
+    ? '¡YHLQMDLG! El Conejo Malo del prato 🐰🌴'
+    : `Ciao! Sono ${state.name} 🌱`;
+  showSpeech(initGreeting, 2600);
   setInterval(gameTick, 2500);
   scheduleBlink();
 })();
